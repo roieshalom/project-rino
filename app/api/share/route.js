@@ -43,6 +43,8 @@ export async function GET(request) {
   let image = null;
   let ingredients = [];
   let steps = [];
+  let time = null;
+  let servings = null;
   let category = null;
   let parse_status = "fallback";
 
@@ -72,6 +74,8 @@ export async function GET(request) {
           image = Array.isArray(img) ? (img[0]?.url ?? img[0]) : (img?.url ?? img ?? null);
           ingredients = (recipe.recipeIngredient ?? []).map(i => ({ name: i, qty: "" }));
           steps = (recipe.recipeInstructions ?? []).map(s => typeof s === "string" ? s : s.text ?? "");
+          time = recipe.totalTime ?? recipe.cookTime ?? null;
+          servings = recipe.recipeYield ? String(recipe.recipeYield) : null;
           parse_status = "schema";
           break;
         }
@@ -118,6 +122,8 @@ Return only valid JSON, no other text.`);
           if (parsed.description) description = parsed.description;
           if (parsed.ingredients?.length) ingredients = parsed.ingredients.map(i => ({ name: i, qty: "" }));
           if (parsed.steps?.length) steps = parsed.steps;
+          if (parsed.time) time = parsed.time;
+          if (parsed.servings) servings = String(parsed.servings);
           parse_status = "ai";
         } catch {}
       }
@@ -155,6 +161,8 @@ Reply with only the Hebrew category name, nothing else.`);
     image,
     ingredients,
     steps,
+    time,
+    servings,
     source_url: sharedUrl,
     source_name: hostname,
     category,
