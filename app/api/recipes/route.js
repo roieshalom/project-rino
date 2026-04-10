@@ -9,11 +9,15 @@ export async function GET() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from("recipes")
-    .select("*")
+    .select("*", { count: "exact" })
     .order("created_at", { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
+  return NextResponse.json({ 
+    data: data ?? [], 
+    error: error?.message ?? null,
+    count,
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL?.slice(0, 30)
+  });
 }
