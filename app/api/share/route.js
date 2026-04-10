@@ -83,7 +83,12 @@ export async function GET(request) {
           description = recipe.description ?? description;
           const img = recipe.image;
           image = Array.isArray(img) ? (img[0]?.url ?? img[0]) : (img?.url ?? img ?? null);
-          ingredients = (recipe.recipeIngredient ?? []).map(i => ({ name: i, qty: "" }));
+          ingredients = (recipe.recipeIngredient ?? []).flatMap(i => 
+          i.split(/<br\s*\/?>/i)
+          .map(s => s.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim())
+          .filter(s => s.length > 0)
+          .map(s => ({ name: s, qty: "" }))
+        );
           steps = (recipe.recipeInstructions ?? []).map(s => typeof s === "string" ? s : s.text ?? "");
           time = formatDuration(recipe.totalTime ?? recipe.cookTime ?? recipe.prepTime ?? null);
           servings = recipe.recipeYield ? String(recipe.recipeYield) : null;
