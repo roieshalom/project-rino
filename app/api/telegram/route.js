@@ -3,15 +3,8 @@ export const dynamic = "force-dynamic";
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const SITE_URL = "https://project-rino.vercel.app";
 
-const RECIPE_KEYWORDS = [
-  "recipe", "recipes", "food", "cooking", "kitchen", "chef", "tasty",
-  "delicious", "bishul", "maachal", "mako.co.il/food", "walla.co.il/food",
-  "allrecipes", "seriouseats", "bonappetit", "epicurious"
-];
-
 function looksLikeRecipeUrl(url) {
-  const lower = url.toLowerCase();
-  return RECIPE_KEYWORDS.some(k => lower.includes(k));
+  return url.startsWith("http");
 }
 
 async function reactToMessage(chatId, messageId, emoji) {
