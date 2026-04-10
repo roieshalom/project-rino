@@ -1,14 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
-import { notFound } from "next/navigation";
 
 export default async function RecipePage({ params, searchParams }) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  if (!url || !key) {
+    return <div style={{padding:"2rem",color:"red"}}>Missing env vars. URL: {String(url)} KEY: {String(!!key)}</div>;
+  }
+
+  const supabase = createClient(url, key);
   const id = params?.id;
-  if (!id) notFound();
+
+  if (!id) {
+    return <div style={{padding:"2rem",color:"red"}}>No ID in params: {JSON.stringify(params)}</div>;
+  }
 
   const { data: recipe, error } = await supabase
     .from("recipes")
@@ -16,7 +21,13 @@ export default async function RecipePage({ params, searchParams }) {
     .eq("id", id)
     .single();
 
-  if (error || !recipe) notFound();
+  if (error) {
+    return <div style={{padding:"2rem",color:"red"}}>Supabase error: {error.message} — ID: {id}</div>;
+  }
+
+  if (!recipe) {
+    return <div style={{padding:"2rem",color:"red"}}>No recipe found for ID: {id}</div>;
+  }
 
   const isNew = searchParams?.new === "1";
 
