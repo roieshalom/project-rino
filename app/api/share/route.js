@@ -124,14 +124,20 @@ Return only valid JSON, no other text.`);
     }
 
     // Strategy 4: AI categorization
-    const categoryText = await callClaude(`Based on this recipe, choose exactly one category from this list:
-${CATEGORIES.join(", ")}
+const categoryText = await callClaude(`Based on this recipe, choose exactly one category from this list:
+- מאפים — baked goods like pastries, bread, burekas, quiche
+- עוגות וקינוחים — cakes, desserts, cookies, sweet treats
+- מרקים — soups and stews
+- סלטים — salads, dips, spreads like hummus or tahini
+- בשרים — meat and poultry dishes
+- פסטה ואורז — pasta, rice, grains
+- בלי תנור — recipes that require NO oven, stovetop or heating at all, raw or cold dishes
 
 Recipe title: ${title}
 Description: ${description}
 Ingredients: ${ingredients.slice(0, 5).map(i => i.name).join(", ")}
 
-Reply with only the category name, nothing else.`);
+Reply with only the Hebrew category name, nothing else.`);
 
     if (categoryText) {
       const matched = CATEGORIES.find(c => categoryText.trim().includes(c));
