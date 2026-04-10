@@ -34,7 +34,7 @@ export async function GET(request) {
     });
     const html = await res.text();
 
-    // Try schema.org JSON-LD first
+    // Strategy 1: schema.org JSON-LD
     const scriptMatches = html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi);
     for (const match of scriptMatches) {
       try {
@@ -57,7 +57,7 @@ export async function GET(request) {
       } catch {}
     }
 
-    // Fallback to OG tags if no schema found
+    // Strategy 2: OG tags
     if (parse_status === "fallback") {
       const ogTitle = html.match(/property="og:title"\s+content="([^"]+)"/) ?? html.match(/content="([^"]+)"\s+property="og:title"/);
       const ogDesc = html.match(/property="og:description"\s+content="([^"]+)"/) ?? html.match(/content="([^"]+)"\s+property="og:description"/);
@@ -65,6 +65,58 @@ export async function GET(request) {
       if (ogTitle) title = ogTitle[1];
       if (ogDesc) description = ogDesc[1];
       if (ogImage) image = ogImage[1];
+    }
+
+    // Strategy 3: AI extraction if still no ingredients/steps
+    if (ingredients.length === 0 && steps.length === 0) {
+      const stripped = html
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/<style[\s\S]*?<\/style>/gi, "")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 8000);
+
+      const aiRes = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 1500,
+          messages: [{
+            role: "user",
+            content: `Extract the recipe from this webpage text. Return ONLY a JSON object with these fields:
+- title (string)
+- description (string, one sentence)
+- ingredients (array of strings, each ingredient as written)
+- steps (array of strings, each step as written)
+- time (string, e.g. "30 דק'" or null)
+- servings (string or null)
+
+Webpage text:
+${stripped}
+
+Return only valid JSON, no other text.`
+          }]
+        })
+      });
+
+      if (aiRes.ok) {
+        const aiData = await aiRes.json();
+        const text = aiData.content?.[0]?.text ?? "";
+        try {
+          const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+          if (parsed.title) title = parsed.title;
+          if (parsed.description) description = parsed.description;
+          if (parsed.ingredients?.length) ingredients = parsed.ingredients.map(i => ({ name: i, qty: "" }));
+          if (parsed.steps?.length) steps = parsed.steps;
+          parse_status = "ai";
+        } catch {}
+      }
     }
   } catch (e) {
     return Response.json({ error: "fetch-failed", detail: String(e) }, { status: 500 });
