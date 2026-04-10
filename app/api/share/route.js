@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const CATEGORIES = ["מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "פסטה ואורז", "בלי תנור"];
+const CATEGORIES = ["מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "פסטה", "בלי תנור", "תוספות"];
 
 async function callClaude(prompt) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -78,7 +78,7 @@ export async function GET(request) {
       } catch {}
     }
 
-    // Strategy 2: OG tags fallback
+    // Strategy 2: OG tags
     if (parse_status === "fallback") {
       const ogTitle = html.match(/property="og:title"\s+content="([^"]+)"/) ?? html.match(/content="([^"]+)"\s+property="og:title"/);
       const ogDesc = html.match(/property="og:description"\s+content="([^"]+)"/) ?? html.match(/content="([^"]+)"\s+property="og:description"/);
@@ -88,7 +88,7 @@ export async function GET(request) {
       if (ogImage) image = ogImage[1];
     }
 
-    // Strategy 3: AI extraction if still no ingredients/steps
+    // Strategy 3: AI extraction
     if (ingredients.length === 0 && steps.length === 0) {
       const stripped = html
         .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -113,7 +113,7 @@ Return only valid JSON, no other text.`);
 
       if (aiText) {
         try {
-          const parsed = JSON.parse(aiText.replace(/\`\`\`json|\`\`\`/g, "").trim());
+          const parsed = JSON.parse(aiText.replace(/```json|```/g, "").trim());
           if (parsed.title) title = parsed.title;
           if (parsed.description) description = parsed.description;
           if (parsed.ingredients?.length) ingredients = parsed.ingredients.map(i => ({ name: i, qty: "" }));
@@ -124,21 +124,21 @@ Return only valid JSON, no other text.`);
     }
 
     // Strategy 4: AI categorization
-const categoryText = await callClaude(`Based on this recipe, choose exactly one category from this list:
+    const categoryText = await callClaude(`Based on this recipe, choose exactly one category from this list:
 - מאפים — baked goods like pastries, bread, burekas, quiche
 - עוגות וקינוחים — cakes, desserts, cookies, sweet treats
 - מרקים — soups and stews
 - סלטים — salads, dips, spreads like hummus or tahini
 - בשרים — meat and poultry dishes
 - פסטה — pasta
-- בלי תנור — recipes that require NO oven, stovetop or heating at all, raw or cold dishes
-- תוספות - side sishes like roasted vegetables, potatoes, rice, grains
+- בלי תנור — recipes that require NO oven, stovetop or raw/cold dishes only
+- תוספות — side dishes like roasted vegetables, potatoes, rice, grains
 
 Recipe title: ${title}
 Description: ${description}
 Ingredients: ${ingredients.slice(0, 5).map(i => i.name).join(", ")}
 
-Reply with only the Hebrew category name, nothing else.\`);
+Reply with only the Hebrew category name, nothing else.`);
 
     if (categoryText) {
       const matched = CATEGORIES.find(c => categoryText.trim().includes(c));
@@ -166,4 +166,4 @@ Reply with only the Hebrew category name, nothing else.\`);
   }
 
   return Response.redirect(new URL("/recipe/" + saved.id + "?new=1", request.url));
-}}
+}
