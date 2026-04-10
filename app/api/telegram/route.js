@@ -7,15 +7,24 @@ function looksLikeRecipeUrl(url) {
   return url.startsWith("http");
 }
 
-async function reactToMessage(chatId, messageId, emoji) {
-  await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/setMessageReaction`, {
+async function reactToMessage(chatId, messageId) {
+  const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/setMessageReaction`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       chat_id: chatId,
       message_id: messageId,
-      reaction: [{ type: "emoji", emoji }],
+      reaction: [{ type: "emoji", emoji: "✅" }],
     }),
+  });
+  return res.ok;
+}
+
+async function sendMessage(chatId, text) {
+  await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text }),
   });
 }
 
@@ -32,18 +41,16 @@ export async function POST(request) {
   if (!urlMatch) return new Response("ok");
 
   const url = urlMatch[0];
-
   if (!looksLikeRecipeUrl(url)) return new Response("ok");
 
   try {
-    const res = await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}`);
-    if (res.ok || res.redirected) {
-      await reactToMessage(chatId, messageId, "✅");
-    } else {
-      await reactToMessage(chatId, messageId, "❌");
+    await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}`);
+    const reacted = await reactToMessage(chatId, messageId);
+    if (!reacted) {
+      await sendMessage(chatId, "✅ נשמר!");
     }
   } catch {
-    await reactToMessage(chatId, messageId, "❌");
+    await sendMessage(chatId, "❌ שגיאה");
   }
 
   return new Response("ok");
