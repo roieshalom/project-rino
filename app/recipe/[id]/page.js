@@ -78,7 +78,7 @@ export default async function RecipePage({ params, searchParams }) {
                 {recipe.steps.map((step, i) => (
                   <div key={i} className="step">
                     <div className="step-num">{i + 1}</div>
-                    <div className="step-text">{typeof step === "string" ? step : step.text}</div>
+                    <div className="step-text">{(typeof step === "string" ? step : step.text ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()}</div>
                   </div>
                 ))}
               </div>
