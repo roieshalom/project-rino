@@ -64,7 +64,7 @@ export default async function RecipePage({ params, searchParams }) {
               <div className="ingredients">
                 {recipe.ingredients.map((ing, i) => (
                   <div key={i} className="ingredient">
-                    <span>{typeof ing === "string" ? ing : ing.name}</span>
+                    <span>{(typeof ing === "string" ? ing : ing.name).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()}</span>
                     {ing.qty && <span className="qty">{ing.qty}</span>}
                   </div>
                 ))}
