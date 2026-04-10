@@ -4,8 +4,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request) {
   const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 
   const { searchParams } = new URL(request.url);
