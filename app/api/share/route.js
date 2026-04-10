@@ -137,5 +137,4 @@ Return only valid JSON, no other text.`
     return Response.json({ error: "save-failed", detail: error.message }, { status: 500 });
   }
 
-  return Response.redirect(new URL("/recipe/" + saved.id + "?new=1", request.url));
-}
+return Response.redirect(new URL("/?new=1", request.url));}
