@@ -3,6 +3,17 @@ export const revalidate = 0;
 
 const CATEGORIES = ["מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "פסטה", "בלי תנור", "תוספות"];
 
+function formatDuration(iso) {
+  if (!iso) return null;
+  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+  if (!match) return iso;
+  const h = parseInt(match[1] ?? 0);
+  const m = parseInt(match[2] ?? 0);
+  if (h && m) return `${h} שע׳ ${m} דק׳`;
+  if (h) return `${h} שעות`;
+  return `${m} דק׳`;
+}
+
 async function callClaude(prompt) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -74,7 +85,7 @@ export async function GET(request) {
           image = Array.isArray(img) ? (img[0]?.url ?? img[0]) : (img?.url ?? img ?? null);
           ingredients = (recipe.recipeIngredient ?? []).map(i => ({ name: i, qty: "" }));
           steps = (recipe.recipeInstructions ?? []).map(s => typeof s === "string" ? s : s.text ?? "");
-          time = recipe.totalTime ?? recipe.cookTime ?? null;
+          time = formatDuration(recipe.totalTime ?? recipe.cookTime ?? recipe.prepTime ?? null);
           servings = recipe.recipeYield ? String(recipe.recipeYield) : null;
           parse_status = "schema";
           break;
