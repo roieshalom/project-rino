@@ -72,18 +72,23 @@ export default async function RecipePage({ params, searchParams }) {
             </section>
           )}
           {Array.isArray(recipe.steps) && recipe.steps.length > 0 && (
-            <section>
-              <h2 className="section-title">👨‍🍳 אופן ההכנה</h2>
-              <div className="steps">
-                {recipe.steps.map((step, i) => (
-                  <div key={i} className="step">
-                    <div className="step-num">{i + 1}</div>
-                    <div className="step-text">{(typeof step === "string" ? step : step.text ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+          <section>
+            <h2 className="section-title">👨‍🍳 אופן ההכנה</h2>
+            <div className="steps">
+              {recipe.steps.flatMap((step, i) => {
+                const raw = typeof step === "string" ? step : step.text ?? "";
+                return raw.split(/<br\s*\/?>/i)
+                  .map(t => t.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim())
+                  .filter(t => t.length > 0);
+              }).map((step, i) => (
+                <div key={i} className="step">
+                  <div className="step-num">{i + 1}</div>
+                  <div className="step-text">{step}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
           {recipe.parse_status === "fallback" && recipe.raw_text && (
             <section>
               <h2 className="section-title">📄 טקסט גולמי</h2>
