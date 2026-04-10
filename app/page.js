@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const CATEGORIES = ["מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "פסטה", "בלי תנור", "תוספות"];
+const TAGS = ["הכל", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה", "בלי תנור"];
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
