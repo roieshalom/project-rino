@@ -1,9 +1,29 @@
-import { createClient } from "@supabase/supabase-js";
-
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+const CATEGORIES = ["מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "פסטה ואורז", "בלי תנור"];
+
+async function callClaude(prompt) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1500,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.content?.[0]?.text ?? null;
+}
+
 export async function GET(request) {
+  const { createClient } = await import("@supabase/supabase-js");
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -23,6 +43,7 @@ export async function GET(request) {
   let image = null;
   let ingredients = [];
   let steps = [];
+  let category = null;
   let parse_status = "fallback";
 
   try {
@@ -57,7 +78,7 @@ export async function GET(request) {
       } catch {}
     }
 
-    // Strategy 2: OG tags
+    // Strategy 2: OG tags fallback
     if (parse_status === "fallback") {
       const ogTitle = html.match(/property="og:title"\s+content="([^"]+)"/) ?? html.match(/content="([^"]+)"\s+property="og:title"/);
       const ogDesc = html.match(/property="og:description"\s+content="([^"]+)"/) ?? html.match(/content="([^"]+)"\s+property="og:description"/);
@@ -77,39 +98,22 @@ export async function GET(request) {
         .trim()
         .slice(0, 8000);
 
-      const aiRes = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-        },
-        body: JSON.stringify({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 1500,
-          messages: [{
-            role: "user",
-            content: `Extract the recipe from this webpage text. Return ONLY a JSON object with these fields:
+      const aiText = await callClaude(`Extract the recipe from this webpage text. Return ONLY a JSON object with these fields:
 - title (string)
 - description (string, one sentence)
-- ingredients (array of strings, each ingredient as written)
-- steps (array of strings, each step as written)
-- time (string, e.g. "30 דק'" or null)
+- ingredients (array of strings)
+- steps (array of strings)
+- time (string e.g. "30 דק'" or null)
 - servings (string or null)
 
 Webpage text:
 ${stripped}
 
-Return only valid JSON, no other text.`
-          }]
-        })
-      });
+Return only valid JSON, no other text.`);
 
-      if (aiRes.ok) {
-        const aiData = await aiRes.json();
-        const text = aiData.content?.[0]?.text ?? "";
+      if (aiText) {
         try {
-          const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
+          const parsed = JSON.parse(aiText.replace(/\`\`\`json|\`\`\`/g, "").trim());
           if (parsed.title) title = parsed.title;
           if (parsed.description) description = parsed.description;
           if (parsed.ingredients?.length) ingredients = parsed.ingredients.map(i => ({ name: i, qty: "" }));
@@ -118,6 +122,22 @@ Return only valid JSON, no other text.`
         } catch {}
       }
     }
+
+    // Strategy 4: AI categorization
+    const categoryText = await callClaude(`Based on this recipe, choose exactly one category from this list:
+${CATEGORIES.join(", ")}
+
+Recipe title: ${title}
+Description: ${description}
+Ingredients: ${ingredients.slice(0, 5).map(i => i.name).join(", ")}
+
+Reply with only the category name, nothing else.`);
+
+    if (categoryText) {
+      const matched = CATEGORIES.find(c => categoryText.trim().includes(c));
+      if (matched) category = matched;
+    }
+
   } catch (e) {
     return Response.json({ error: "fetch-failed", detail: String(e) }, { status: 500 });
   }
@@ -130,11 +150,13 @@ Return only valid JSON, no other text.`
     steps,
     source_url: sharedUrl,
     source_name: hostname,
+    category,
     parse_status,
   }]).select().single();
 
   if (error) {
     return Response.json({ error: "save-failed", detail: error.message }, { status: 500 });
   }
+
   return Response.redirect(new URL("/recipe/" + saved.id + "?new=1", request.url));
 }
