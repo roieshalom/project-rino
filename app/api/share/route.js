@@ -85,4 +85,4 @@ export async function GET(request) {
 
   if (error) return Response.redirect(new URL("/?error=save-failed", request.url));
   return Response.redirect(new URL(`/recipe/${saved.id}?new=1`, request.url));
-}
+}}
