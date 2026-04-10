@@ -130,14 +130,15 @@ const categoryText = await callClaude(`Based on this recipe, choose exactly one 
 - מרקים — soups and stews
 - סלטים — salads, dips, spreads like hummus or tahini
 - בשרים — meat and poultry dishes
-- פסטה ואורז — pasta, rice, grains
+- פסטה — pasta
 - בלי תנור — recipes that require NO oven, stovetop or heating at all, raw or cold dishes
+- תוספות - side sishes like roasted vegetables, potatoes, rice, grains
 
 Recipe title: ${title}
 Description: ${description}
 Ingredients: ${ingredients.slice(0, 5).map(i => i.name).join(", ")}
 
-Reply with only the Hebrew category name, nothing else.`);
+Reply with only the Hebrew category name, nothing else.\`);
 
     if (categoryText) {
       const matched = CATEGORIES.find(c => categoryText.trim().includes(c));
@@ -165,4 +166,4 @@ Reply with only the Hebrew category name, nothing else.`);
   }
 
   return Response.redirect(new URL("/recipe/" + saved.id + "?new=1", request.url));
-}
+}}
