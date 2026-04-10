@@ -42,7 +42,6 @@ export default function Home() {
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
       </header>
       <div className="hero">
-        <p className="hero-eyebrow">האוסף המשפחתי שלנו</p>
         <h1 className="hero-title">כל מה שטעים<br /><em>במקום אחד</em></h1>
         <p className="hero-sub">שתף קישור מהנייד ישירות לאוסף שלנו.</p>
         <div className="search-bar">
