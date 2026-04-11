@@ -11,6 +11,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [searchFocused, setSearchFocused] = useState(false);
   const isAdmin = useAdmin();
 
   useEffect(() => {
@@ -54,9 +55,21 @@ export default function Home() {
       <div className="hero">
         <h1 className="hero-title">כל מה שטעים<br /><em>במקום אחד</em></h1>
         <p className="hero-sub">שתף קישור מהנייד ישירות לאוסף שלנו.</p>
-        <div className="search-bar">
-          <span className="search-icon">🔍</span>
-          <input placeholder="חפש מתכון..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div className={`search-bar${searchFocused ? " search-bar-focused" : ""}`}>
+          <button
+            className={`search-icon-btn${search ? " search-icon-active" : ""}${searchFocused ? " search-icon-focused" : ""}`}
+            onClick={() => setSearch("")}
+            tabIndex={-1}
+          >
+            {search ? "✕" : "🔍"}
+          </button>
+          <input
+            placeholder="חפש מתכון..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+          />
         </div>
       </div>
       <div className="stats-bar">
@@ -126,9 +139,12 @@ const css = `
   .hero-title em { color: var(--terra-light); font-style: normal; }
   .hero-sub { color: var(--muted); font-size: 0.9rem; font-weight: 300; margin-bottom: 1.75rem; }
   .search-bar { max-width: 440px; margin: 0 auto; position: relative; }
-  .search-bar input { width: 100%; padding: 0.85rem 1.2rem 0.85rem 3rem; border-radius: 100px; border: 1px solid rgba(244,236,216,0.15); background: rgba(244,236,216,0.1); color: var(--cream); font-family: 'Heebo', sans-serif; font-size: 0.9rem; outline: none; direction: rtl; text-align: right; }
+  .search-bar input { width: 100%; padding: 0.85rem 1.2rem 0.85rem 3rem; border-radius: 100px; border: 1px solid rgba(244,236,216,0.15); background: rgba(244,236,216,0.1); color: var(--cream); font-family: 'Heebo', sans-serif; font-size: 0.9rem; outline: none; direction: rtl; text-align: right; transition: border-color 0.2s; }
   .search-bar input::placeholder { color: rgba(244,236,216,0.4); }
-  .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: rgba(244,236,216,0.4); }
+  .search-bar-focused input { border-color: rgba(244,236,216,0.6); }
+  .search-icon-btn { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 0.95rem; opacity: 0.4; transition: opacity 0.2s; line-height: 1; padding: 0.2rem; color: var(--cream); }
+  .search-icon-btn.search-icon-focused { opacity: 0.85; }
+  .search-icon-btn.search-icon-active { opacity: 1; font-size: 0.8rem; font-style: normal; }
   .stats-bar { display: flex; justify-content: center; gap: 3rem; padding: 1.25rem 1.5rem; background: var(--cream-dark); border-bottom: 1px solid rgba(30,18,8,0.08); }
   .stat { text-align: center; }
   .stat-num { font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; font-weight: 700; color: var(--terra); }
