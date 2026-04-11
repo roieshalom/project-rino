@@ -85,20 +85,15 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div className="stats-bar">
-        <div className="stat"><div className="stat-num">{recipes.length}</div><div className="stat-label">מתכונים</div></div>
-        <div className="stat"><div className="stat-num">{[...new Set(recipes.map((r) => r.source_name).filter(Boolean))].length || 0}</div><div className="stat-label">מקורות</div></div>
-      </div>
-      <div className="content">
+      <div className="filter-bar">
+        <span className="recipe-count">{filtered.length} מתכונים</span>
         <div className="tags">
           {TAGS.map((t) => (
             <button key={t} className={`tag ${activeTag === t ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTag(t)}>{t}</button>
           ))}
         </div>
-        <div className="section-header">
-          <h2 className="section-title">{activeTag === "הכל" ? "כל המתכונים" : activeTag}</h2>
-          <span className="section-count">{filtered.length} מתכונים</span>
-        </div>
+      </div>
+      <div className="content">
         {loading ? (
           <div className="empty-state"><div className="icon">⏳</div><h3>טוען...</h3></div>
         ) : filtered.length === 0 ? (
@@ -162,15 +157,10 @@ const css = `
   .search-icon-btn { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 0.95rem; opacity: 0.4; transition: opacity 0.2s; line-height: 1; padding: 0.2rem; color: var(--cream); }
   .search-icon-btn.search-icon-focused { opacity: 0.85; }
   .search-icon-btn.search-icon-active { opacity: 1; font-size: 0.8rem; }
-  .stats-bar { display: flex; justify-content: center; gap: 3rem; padding: 1.25rem 1.5rem; background: var(--cream-dark); border-bottom: 1px solid rgba(30,18,8,0.08); }
-  .stat { text-align: center; }
-  .stat-num { font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; font-weight: 700; color: var(--terra); }
-  .stat-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
-  .content { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem; }
-  .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
-  .section-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.4rem; font-weight: 700; }
-  .section-count { font-size: 0.82rem; color: var(--muted); }
-  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+  .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.85rem 1.25rem; display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(30,18,8,0.08); }
+  .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--espresso); white-space: nowrap; flex-shrink: 0; }
+  .content { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1.25rem 2rem; }
+  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .tag { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; cursor: pointer; border: 1.5px solid transparent; font-family: 'Heebo', sans-serif; transition: all 0.15s; }
   .tag-inactive { background: var(--card); color: var(--muted); border-color: var(--cream-dark); }
   .tag-inactive:hover { border-color: var(--terra); color: var(--terra); }
