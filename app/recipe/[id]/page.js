@@ -47,14 +47,10 @@ export default async function RecipePage({ params, searchParams }) {
         <div className="detail-body">
           {recipe.category && <div className="detail-category">{recipe.category}</div>}
           <h1 className="detail-title">{recipe.title}</h1>
-          {recipe.source_url && (
-            <div className="detail-source">
-              📎 מקור: <a href={recipe.source_url} target="_blank" rel="noreferrer">{recipe.source_name ?? recipe.source_url}</a>
-            </div>
-          )}
           <div className="detail-pills">
             {recipe.time && <span className="pill">⏱ {recipe.time}</span>}
             {recipe.servings && <span className="pill">👥 {recipe.servings} מנות</span>}
+            {recipe.source_url && <a href={recipe.source_url} target="_blank" rel="noreferrer" className="pill pill-link">📎</a>}
             {recipe.parse_status === "fallback" && <span className="pill pill-warn">⚠️ טעון עריכה</span>}
           </div>
           {recipe.description && <p className="detail-desc">{recipe.description}</p>}
@@ -117,11 +113,10 @@ const css = `
   .detail-body { padding: 1.75rem 1.5rem 4rem; }
   .detail-category { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--olive); font-weight: 700; margin-bottom: 0.4rem; }
   .detail-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 900; line-height: 1.15; margin-bottom: 0.6rem; }
-  .detail-source { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; }
-  .detail-source a { color: var(--terra); }
-  .detail-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.detail-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
   .pill { padding: 0.3rem 0.8rem; background: var(--cream); border-radius: 100px; font-size: 0.78rem; color: var(--muted); }
   .pill-warn { background: #FFF3CD; color: #8a6a00; }
+  .pill-link { text-decoration: none; color: var(--muted); }
   .detail-desc { font-size: 0.95rem; line-height: 1.65; color: var(--muted); margin-bottom: 2rem; }
   .section-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.15rem; font-weight: 700; margin: 1.75rem 0 0.75rem; }
   .ingredients { background: var(--cream); border-radius: 12px; padding: 0.5rem 1.1rem; }
