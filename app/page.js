@@ -102,9 +102,9 @@ export default function Home() {
                     <div className="card-meta">
                       {r.time && <span className="meta-item">⏱ {r.time}</span>}
                       {r.servings && <span className="meta-item">👥 {r.servings}</span>}
+                      {r.source_url && <a href={r.source_url} target="_blank" rel="noreferrer" className="meta-item meta-source" onClick={e => e.stopPropagation()}>📎</a>}
                       {r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
                     </div>
-                    {r.source_name && <div className="card-source">🔗 {r.source_name}</div>}
                   </div>
                 </a>
                 {isAdmin && (
@@ -169,9 +169,9 @@ const css = `
   .card-category { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--olive); font-weight: 700; margin-bottom: 0.3rem; }
   .card-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
   .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.75rem; flex-shrink: 0; }
-  .card-meta { display: flex; gap: 0.75rem; font-size: 0.72rem; color: var(--muted); flex-wrap: wrap; align-items: center; margin-top: auto; }
+  .card-meta { display: flex; gap: 0.5rem; font-size: 0.72rem; color: var(--muted); flex-wrap: nowrap; align-items: center; margin-top: auto; overflow: hidden; }
   .meta-badge { background: #FFF3CD; color: #8a6a00; border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.65rem; }
-  .card-source { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--cream-dark); font-size: 0.68rem; color: var(--muted); }
+  .meta-source { text-decoration: none; }
   .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
   .empty-state .icon { font-size: 3rem; margin-bottom: 0.75rem; }
   .empty-state h3 { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; margin-bottom: 0.4rem; color: var(--espresso); }
