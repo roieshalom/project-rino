@@ -105,7 +105,6 @@ export default function Home() {
                 <a href={`/recipe/${r.id}`} className="card">
                   {r.image ? <img src={r.image} alt={r.title} className="card-img" /> : <div className="card-img-placeholder">🍴</div>}
                   <div className="card-body">
-                    {r.category && <div className="card-category">{r.category}</div>}
                     <div className="card-title">{r.title}</div>
                     {r.description && <div className="card-desc">{r.description}</div>}
                     <div className="card-meta">
@@ -113,6 +112,7 @@ export default function Home() {
                       {r.servings && <span className="meta-item">👥 {r.servings}</span>}
                       {r.source_url && <a href={r.source_url} target="_blank" rel="noreferrer" className="meta-item meta-source" onClick={e => e.stopPropagation()}>📎</a>}
                       {r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
+                      {r.category && <span className="meta-category">{r.category}</span>}
                     </div>
                   </div>
                 </a>
@@ -166,7 +166,7 @@ const css = `
   .tag-inactive:hover { border-color: var(--terra); color: var(--terra); }
   .tag-active { background: var(--terra); color: white; border-color: var(--terra); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.1rem; }
-  .card-wrap { position: relative; height: 370px; }
+  .card-wrap { position: relative; height: 340px; }
   .card-delete-btn { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(244,236,216,0.92); color: var(--terra); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
   .card-delete-btn:hover { background: var(--cream); }
   .card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid rgba(30,18,8,0.07); box-shadow: 0 1px 3px rgba(30,18,8,0.06); transition: all 0.22s; display: flex; flex-direction: column; height: 100%; }
@@ -174,10 +174,10 @@ const css = `
   .card-img { width: 100%; height: 170px; object-fit: cover; display: block; flex-shrink: 0; }
   .card-img-placeholder { width: 100%; height: 170px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; background: var(--cream-dark); flex-shrink: 0; }
   .card-body { padding: 1rem 1.1rem 1.2rem; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .card-category { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--olive); font-weight: 700; margin-bottom: 0.3rem; }
   .card-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
   .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.75rem; flex-shrink: 0; }
   .card-meta { display: flex; gap: 0.5rem; font-size: 0.72rem; color: var(--muted); flex-wrap: nowrap; align-items: center; margin-top: auto; overflow: hidden; }
+  .meta-category { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; background: var(--card); color: var(--muted); border: 1.5px solid var(--cream-dark); font-family: 'Heebo', sans-serif; white-space: nowrap; margin-right: auto; }
   .meta-badge { background: #FFF3CD; color: #8a6a00; border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.65rem; }
   .meta-source { text-decoration: none; }
   .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
