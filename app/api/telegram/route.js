@@ -3,6 +3,20 @@ export const dynamic = "force-dynamic";
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const SITE_URL = "https://project-rino.vercel.app";
 
+async function urlAlreadyExists(url) {
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+  const { data } = await supabase
+    .from("recipes")
+    .select("id")
+    .eq("source_url", url)
+    .limit(1);
+  return data && data.length > 0;
+}
+
 function looksLikeRecipeUrl(url) {
   return url.startsWith("http");
 }
@@ -47,7 +61,14 @@ export async function POST(request) {
   if (!looksLikeRecipeUrl(url)) return new Response("ok");
 
   try {
-    await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}&added_by=${encodeURIComponent(addedBy)}`);    const reacted = await reactToMessage(chatId, messageId);
+    const duplicate = await urlAlreadyExists(url);
+    if (duplicate) {
+      await sendMessage(chatId, "לא נשמר, המתכון הזה כבר קיים אבא 😅");
+      return new Response("ok");
+    }
+
+    await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}&added_by=${encodeURIComponent(addedBy)}`);
+    const reacted = await reactToMessage(chatId, messageId);
     if (!reacted) {
       await sendMessage(chatId, "✅ נשמר אבא!");
     }
