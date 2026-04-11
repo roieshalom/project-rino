@@ -107,7 +107,15 @@ export default function Home() {
       </div>
       <div className="content">
         {loading ? (
-          <div className="empty-state"><div className="icon">⏳</div><h3>טוען...</h3></div>
+          <div className="empty-state">
+            <div className="uib-container">
+              <div className="uib-dot"></div>
+              <div className="uib-dot"></div>
+              <div className="uib-dot"></div>
+              <div className="uib-dot"></div>
+            </div>
+            <h3>רגע, אבא</h3>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="empty-state"><div className="icon">🍽️</div><h3>אין מתכונים עדיין</h3><p>שתף קישור מהנייד כדי להתחיל</p></div>
         ) : (
@@ -202,4 +210,11 @@ const css = `
   .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
   .empty-state .icon { font-size: 3rem; margin-bottom: 0.75rem; }
   .empty-state h3 { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; margin-bottom: 0.4rem; color: var(--espresso); }
+  .uib-container { --uib-size: 78px; --uib-color: var(--terra); --uib-speed: 1.4s; position: relative; display: flex; align-items: center; justify-content: center; width: calc(var(--uib-size) * 0.51); height: calc(var(--uib-size) * 0.51); margin: 0 auto 1rem; }
+  .uib-dot { position: relative; display: flex; flex-shrink: 0; align-items: center; height: 100%; width: 25%; transform-origin: center top; }
+  .uib-dot::after { content: ''; display: block; width: 100%; height: 25%; border-radius: 50%; background-color: var(--uib-color); transition: background-color 0.3s ease; }
+  .uib-dot:first-child { animation: uib-swing var(--uib-speed) linear infinite; }
+  .uib-dot:last-child { animation: uib-swing2 var(--uib-speed) linear infinite; }
+  @keyframes uib-swing { 0%{transform:rotate(0deg);animation-timing-function:ease-out} 25%{transform:rotate(-70deg);animation-timing-function:ease-in} 50%{transform:rotate(0deg);animation-timing-function:linear} }
+  @keyframes uib-swing2 { 0%{transform:rotate(0deg);animation-timing-function:linear} 50%{transform:rotate(0deg);animation-timing-function:ease-out} 75%{transform:rotate(70deg);animation-timing-function:ease-in} }
 `;
