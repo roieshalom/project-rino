@@ -49,7 +49,7 @@ export async function POST(request) {
   try {
     await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}&added_by=${encodeURIComponent(addedBy)}`);    const reacted = await reactToMessage(chatId, messageId);
     if (!reacted) {
-      await sendMessage(chatId, "✅ נשמר!");
+      await sendMessage(chatId, "✅ נשמר אבא!");
     }
   } catch {
     await sendMessage(chatId, "❌ שגיאה");
