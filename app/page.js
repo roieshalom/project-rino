@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AdminLock, { useAdmin } from "./components/AdminLock";
 
 const TAGS = ["הכל", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה", "בלי תנור"];
 
@@ -10,6 +11,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const isAdmin = useAdmin();
 
   useEffect(() => {
     fetch("/api/recipes")
@@ -27,6 +29,13 @@ export default function Home() {
     }
   }, []);
 
+  async function handleDelete(e, id) {
+    e.preventDefault();
+    if (!confirm("למחוק את המתכון?")) return;
+    await fetch(`/api/recipes/${id}`, { method: "DELETE" });
+    setRecipes(prev => prev.filter(r => r.id !== id));
+  }
+
   const filtered = recipes.filter((r) => {
     const matchTag = activeTag === "הכל" || r.category === activeTag;
     const matchSearch = !search || r.title?.includes(search) || r.description?.includes(search);
@@ -39,6 +48,7 @@ export default function Home() {
       <div className="grain" />
       {toast && <div className={`toast toast-${toast.type}`}>{toast.msg}</div>}
       <header>
+        <AdminLock />
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
       </header>
       <div className="hero">
@@ -70,20 +80,25 @@ export default function Home() {
         ) : (
           <div className="grid">
             {filtered.map((r) => (
-              <a key={r.id} href={`/recipe/${r.id}`} className="card">
-                {r.image ? <img src={r.image} alt={r.title} className="card-img" /> : <div className="card-img-placeholder">🍴</div>}
-                <div className="card-body">
-                  {r.category && <div className="card-category">{r.category}</div>}
-                  <div className="card-title">{r.title}</div>
-                  {r.description && <div className="card-desc">{r.description}</div>}
-                  <div className="card-meta">
-                    {r.time && <span className="meta-item">⏱ {r.time}</span>}
-                    {r.servings && <span className="meta-item">👥 {r.servings}</span>}
-                    {r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
+              <div key={r.id} className="card-wrap">
+                <a href={`/recipe/${r.id}`} className="card">
+                  {r.image ? <img src={r.image} alt={r.title} className="card-img" /> : <div className="card-img-placeholder">🍴</div>}
+                  <div className="card-body">
+                    {r.category && <div className="card-category">{r.category}</div>}
+                    <div className="card-title">{r.title}</div>
+                    {r.description && <div className="card-desc">{r.description}</div>}
+                    <div className="card-meta">
+                      {r.time && <span className="meta-item">⏱ {r.time}</span>}
+                      {r.servings && <span className="meta-item">👥 {r.servings}</span>}
+                      {r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
+                    </div>
+                    {r.source_name && <div className="card-source">🔗 {r.source_name}</div>}
                   </div>
-                  {r.source_name && <div className="card-source">🔗 {r.source_name}</div>}
-                </div>
-              </a>
+                </a>
+                {isAdmin && (
+                  <button className="card-delete-btn" onClick={e => handleDelete(e, r.id)}>🗑</button>
+                )}
+              </div>
             ))}
           </div>
         )}
@@ -98,7 +113,7 @@ const css = `
   body { background: var(--cream); color: var(--espresso); font-family: 'Heebo', sans-serif; direction: rtl; min-height: 100vh; }
   a { text-decoration: none; color: inherit; }
   .grain { position: fixed; inset: 0; pointer-events: none; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); z-index: 100; }
-  header { background: var(--espresso); padding: 0 1.5rem; display: flex; align-items: center; height: 60px; position: sticky; top: 0; z-index: 50; }
+  header { background: var(--espresso); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 50; flex-direction: row-reverse; }
   .logo { font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; font-weight: 900; color: var(--cream); display: flex; align-items: center; gap: 0.4rem; }
   .logo span { color: var(--terra-light); }
   .toast { position: fixed; top: 70px; right: 50%; transform: translateX(50%); padding: 0.75rem 1.5rem; border-radius: 100px; font-size: 0.9rem; font-weight: 500; z-index: 300; }
@@ -128,6 +143,9 @@ const css = `
   .tag-inactive:hover { border-color: var(--terra); color: var(--terra); }
   .tag-active { background: var(--terra); color: white; border-color: var(--terra); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.1rem; }
+  .card-wrap { position: relative; }
+  .card-delete-btn { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(184,85,48,0.85); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
+  .card-delete-btn:hover { background: #B85530; }
   .card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid rgba(30,18,8,0.07); box-shadow: 0 1px 3px rgba(30,18,8,0.06); transition: all 0.22s; display: block; }
   .card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,18,8,0.12); }
   .card-img { width: 100%; height: 170px; object-fit: cover; display: block; }
