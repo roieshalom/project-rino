@@ -1,6 +1,6 @@
 export const metadata = {
     title: "ספר המתכונים",
-    description: "אוסף מתכונים משפחתי",
+    description: "אוסף המתכונים של טלי, רינו, ורועי",
 };
 
 export default function RootLayout({ children }) {
