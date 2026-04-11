@@ -12,7 +12,16 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const isAdmin = useAdmin();
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") { setSearchOpen(false); setSearch(""); }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   useEffect(() => {
     fetch("/api/recipes")
@@ -53,23 +62,28 @@ export default function Home() {
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
       </header>
       <div className="hero">
-        <h1 className="hero-title">כל מה שטעים <em>במקום אחד</em></h1>
-        <div className={`search-bar${searchFocused ? " search-bar-focused" : ""}`}>
-          <button
-            className={`search-icon-btn${search ? " search-icon-active" : ""}${searchFocused ? " search-icon-focused" : ""}`}
-            onClick={() => setSearch("")}
-            tabIndex={-1}
-          >
-            {search ? "✕" : "🔍"}
-          </button>
-          <input
-            placeholder="חפש מתכון..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-          />
-        </div>
+        {searchOpen ? (
+          <div className={`search-bar hero-search${searchFocused ? " search-bar-focused" : ""}`}>
+            <button
+              className={`search-icon-btn${search ? " search-icon-active" : ""} search-icon-focused`}
+              onClick={() => { setSearch(""); setSearchOpen(false); }}
+              tabIndex={-1}
+            >✕</button>
+            <input
+              autoFocus
+              placeholder="חפש מתכון..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+            />
+          </div>
+        ) : (
+          <div className="hero-title-row" onMouseEnter={e => e.currentTarget.classList.add("hovered")} onMouseLeave={e => e.currentTarget.classList.remove("hovered")}>
+            <h1 className="hero-title">כל מה שטעים <em>במקום אחד</em></h1>
+            <button className="hero-search-btn" onClick={() => setSearchOpen(true)} aria-label="חיפוש">🔍</button>
+          </div>
+        )}
       </div>
       <div className="stats-bar">
         <div className="stat"><div className="stat-num">{recipes.length}</div><div className="stat-label">מתכונים</div></div>
@@ -131,19 +145,23 @@ const css = `
   .toast { position: fixed; top: 70px; right: 50%; transform: translateX(50%); padding: 0.75rem 1.5rem; border-radius: 100px; font-size: 0.9rem; font-weight: 500; z-index: 300; }
   .toast-success { background: var(--olive); color: white; }
   .toast-error { background: var(--terra); color: white; }
-  .hero { background: var(--espresso); padding: 2rem 1.5rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+  .hero { background: var(--espresso); padding: 0 1.5rem; text-align: center; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 120px; }
   .hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(184,85,48,0.15) 0%, transparent 70%); pointer-events: none; }
-  .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-light); margin-bottom: 0.6rem; }
-  .hero-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(2.2rem, 8vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.05; margin-bottom: 0.75rem; }
+  .hero-title-row { display: inline-flex; align-items: center; gap: 0.6rem; cursor: default; }
+  .hero-title-row.hovered .hero-title { color: var(--cream-dark); }
+  .hero-title-row.hovered .hero-search-btn { opacity: 1; }
+  .hero-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(2.2rem, 8vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.05; transition: color 0.2s; }
   .hero-title em { color: var(--terra-light); font-style: normal; }
-  .hero-sub { color: var(--muted); font-size: 0.9rem; font-weight: 300; margin-bottom: 1.75rem; }
+  .hero-search-btn { background: none; border: none; cursor: pointer; font-size: clamp(1.8rem, 6vw, 3.2rem); line-height: 1; opacity: 0.35; transition: opacity 0.2s; padding: 0; }
+  .hero-search-btn:hover { opacity: 1; }
   .search-bar { max-width: 440px; margin: 0 auto; position: relative; }
+  .hero-search { max-width: 600px; margin: 0 auto; width: 100%; }
   .search-bar input { width: 100%; padding: 0.85rem 1.2rem 0.85rem 3rem; border-radius: 100px; border: 1px solid rgba(244,236,216,0.15); background: rgba(244,236,216,0.1); color: var(--cream); font-family: 'Heebo', sans-serif; font-size: 0.9rem; outline: none; direction: rtl; text-align: right; transition: border-color 0.2s; }
   .search-bar input::placeholder { color: rgba(244,236,216,0.4); }
   .search-bar-focused input { border-color: rgba(244,236,216,0.6); }
   .search-icon-btn { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 0.95rem; opacity: 0.4; transition: opacity 0.2s; line-height: 1; padding: 0.2rem; color: var(--cream); }
   .search-icon-btn.search-icon-focused { opacity: 0.85; }
-  .search-icon-btn.search-icon-active { opacity: 1; font-size: 0.8rem; font-style: normal; }
+  .search-icon-btn.search-icon-active { opacity: 1; font-size: 0.8rem; }
   .stats-bar { display: flex; justify-content: center; gap: 3rem; padding: 1.25rem 1.5rem; background: var(--cream-dark); border-bottom: 1px solid rgba(30,18,8,0.08); }
   .stat { text-align: center; }
   .stat-num { font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; font-weight: 700; color: var(--terra); }
