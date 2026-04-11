@@ -13,6 +13,7 @@ export default function Home() {
   const [toast, setToast] = useState(null);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [showHidden, setShowHidden] = useState(false);
   const isAdmin = useAdmin();
 
   useEffect(() => {
@@ -57,7 +58,10 @@ export default function Home() {
     setRecipes(prev => prev.map(r => r.id === id ? { ...r, hidden: !hidden } : r));
   }
 
+  const hiddenCount = recipes.filter(r => r.hidden).length;
+
   const filtered = recipes.filter((r) => {
+    if (showHidden) return r.hidden;
     if (!isAdmin && r.hidden) return false;
     const matchTag = activeTag === "הכל" || r.category === activeTag;
     const matchSearch = !search || r.title?.includes(search) || r.description?.includes(search);
@@ -98,7 +102,14 @@ export default function Home() {
         )}
       </div>
       <div className="filter-bar">
-        <span className="recipe-count">{filtered.length} מתכונים</span>
+        <div className="recipe-count-wrap">
+          <span className="recipe-count">{showHidden ? `${hiddenCount} מוסתרים` : `${filtered.length} מתכונים`}</span>
+          {isAdmin && hiddenCount > 0 && (
+            <button className="hidden-count-btn" onClick={() => setShowHidden(v => !v)}>
+              {showHidden ? "← כל המתכונים" : `${hiddenCount} מוסתרים`}
+            </button>
+          )}
+        </div>
         <div className="tags">
           {TAGS.map((t) => (
             <button key={t} className={`tag ${activeTag === t ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTag(t)}>{t}</button>
@@ -182,7 +193,10 @@ const css = `
   .search-icon-btn.search-icon-focused { opacity: 0.85; }
   .search-icon-btn.search-icon-active { opacity: 1; font-size: 0.8rem; }
   .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.85rem 1.25rem; display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(30,18,8,0.08); }
-  .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--espresso); white-space: nowrap; flex-shrink: 0; }
+  .recipe-count-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; flex-shrink: 0; }
+  .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--espresso); white-space: nowrap; }
+  .hidden-count-btn { background: none; border: none; cursor: pointer; font-size: 0.72rem; color: var(--muted); font-family: 'Heebo', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
+  .hidden-count-btn:hover { color: var(--terra); }
   .content { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1.25rem 2rem; }
   .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .tag { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; cursor: pointer; border: 1.5px solid transparent; font-family: 'Heebo', sans-serif; transition: all 0.15s; }
