@@ -53,8 +53,7 @@ export default function Home() {
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
       </header>
       <div className="hero">
-        <h1 className="hero-title">כל מה שטעים<br /><em>במקום אחד</em></h1>
-        <p className="hero-sub">שתף קישור מהנייד ישירות לאוסף שלנו.</p>
+        <h1 className="hero-title">כל מה שטעים <em>במקום אחד</em></h1>
         <div className={`search-bar${searchFocused ? " search-bar-focused" : ""}`}>
           <button
             className={`search-icon-btn${search ? " search-icon-active" : ""}${searchFocused ? " search-icon-focused" : ""}`}
@@ -132,7 +131,7 @@ const css = `
   .toast { position: fixed; top: 70px; right: 50%; transform: translateX(50%); padding: 0.75rem 1.5rem; border-radius: 100px; font-size: 0.9rem; font-weight: 500; z-index: 300; }
   .toast-success { background: var(--olive); color: white; }
   .toast-error { background: var(--terra); color: white; }
-  .hero { background: var(--espresso); padding: 3rem 1.5rem 3.5rem; text-align: center; position: relative; overflow: hidden; }
+  .hero { background: var(--espresso); padding: 2rem 1.5rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
   .hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(184,85,48,0.15) 0%, transparent 70%); pointer-events: none; }
   .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-light); margin-bottom: 0.6rem; }
   .hero-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(2.2rem, 8vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.05; margin-bottom: 0.75rem; }
