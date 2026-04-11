@@ -192,7 +192,7 @@ const css = `
   .search-icon-btn { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 0.95rem; opacity: 0.4; transition: opacity 0.2s; line-height: 1; padding: 0.2rem; color: var(--cream); }
   .search-icon-btn.search-icon-focused { opacity: 0.85; }
   .search-icon-btn.search-icon-active { opacity: 1; font-size: 0.8rem; }
-  .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.85rem 1.25rem; display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(30,18,8,0.08); }
+  .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.85rem 1.25rem; display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; gap: 1rem; }
   .recipe-count-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; flex-shrink: 0; }
   .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--espresso); white-space: nowrap; }
   .hidden-count-btn { background: none; border: none; cursor: pointer; font-size: 0.72rem; color: var(--muted); font-family: 'Heebo', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
