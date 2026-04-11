@@ -34,6 +34,9 @@ export async function POST(request) {
   const text = message?.text ?? "";
   const chatId = message?.chat?.id;
   const messageId = message?.message_id;
+  const firstName = message?.from?.first_name ?? "";
+  const lastName = message?.from?.last_name ?? "";
+  const addedBy = [firstName, lastName].filter(Boolean).join(" ");
 
   if (!chatId) return new Response("ok");
 
@@ -44,8 +47,7 @@ export async function POST(request) {
   if (!looksLikeRecipeUrl(url)) return new Response("ok");
 
   try {
-    await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}`);
-    const reacted = await reactToMessage(chatId, messageId);
+    await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}&added_by=${encodeURIComponent(addedBy)}`);    const reacted = await reactToMessage(chatId, messageId);
     if (!reacted) {
       await sendMessage(chatId, "✅ נשמר!");
     }

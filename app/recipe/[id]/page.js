@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import EditRecipe from "../../components/EditRecipe";
 
 export default async function RecipePage({ params, searchParams }) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -30,24 +31,26 @@ export default async function RecipePage({ params, searchParams }) {
   }
 
   const isNew = searchParams?.new === "1";
+  const isEdit = searchParams?.edit === "1";
 
   return (
     <>
-      <style>{css}</style>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
       <header>
         <a href="/" className="back">→ כל המתכונים</a>
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
       </header>
       {isNew && <div className="new-banner">✨ המתכון נשמר בהצלחה!</div>}
+      {isEdit ? <EditRecipe recipe={recipe} /> :
       <div className="detail">
         {recipe.image
           ? <img src={recipe.image} alt={recipe.title} className="detail-img" />
           : <div className="detail-img-placeholder">🍴</div>
         }
         <div className="detail-body">
-          {recipe.category && <div className="detail-category">{recipe.category}</div>}
           <h1 className="detail-title">{recipe.title}</h1>
           <div className="detail-pills">
+            {recipe.category && <span className="pill pill-category">{recipe.category}</span>}
             {recipe.time && <span className="pill">⏱ {recipe.time}</span>}
             {recipe.servings && <span className="pill">👥 {recipe.servings} מנות</span>}
             {recipe.source_url && <a href={recipe.source_url} target="_blank" rel="noreferrer" className="pill pill-link">📎 {new URL(recipe.source_url).hostname.replace("www.", "")}</a>}
@@ -92,7 +95,7 @@ export default async function RecipePage({ params, searchParams }) {
             </section>
           )}
         </div>
-      </div>
+      </div>}
     </>
   );
 }
@@ -111,8 +114,8 @@ const css = `
   .detail-img { width: 100%; height: 280px; object-fit: cover; display: block; }
   .detail-img-placeholder { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: var(--cream-dark); }
   .detail-body { padding: 1.75rem 1.5rem 4rem; }
-  .detail-category { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--olive); font-weight: 700; margin-bottom: 0.4rem; }
   .detail-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 900; line-height: 1.15; margin-bottom: 0.6rem; }
+  .pill-category { background: var(--card); color: var(--muted); border: 1.5px solid var(--cream-dark); }
 .detail-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
   .pill { padding: 0.3rem 0.8rem; background: var(--cream); border-radius: 100px; font-size: 0.78rem; color: var(--muted); }
   .pill-warn { background: #FFF3CD; color: #8a6a00; }

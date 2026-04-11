@@ -46,7 +46,18 @@ export default function Home() {
     setRecipes(prev => prev.filter(r => r.id !== id));
   }
 
+  async function handleToggleHidden(e, id, hidden) {
+    e.preventDefault();
+    await fetch(`/api/recipes/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hidden: !hidden }),
+    });
+    setRecipes(prev => prev.map(r => r.id === id ? { ...r, hidden: !hidden } : r));
+  }
+
   const filtered = recipes.filter((r) => {
+    if (!isAdmin && r.hidden) return false;
     const matchTag = activeTag === "הכל" || r.category === activeTag;
     const matchSearch = !search || r.title?.includes(search) || r.description?.includes(search);
     return matchTag && matchSearch;
@@ -101,7 +112,7 @@ export default function Home() {
         ) : (
           <div className="grid">
             {filtered.map((r) => (
-              <div key={r.id} className="card-wrap">
+              <div key={r.id} className={`card-wrap${r.hidden ? " card-wrap-hidden" : ""}`}>
                 <a href={`/recipe/${r.id}`} className="card">
                   {r.image ? <img src={r.image} alt={r.title} className="card-img" /> : <div className="card-img-placeholder">🍴</div>}
                   <div className="card-body">
@@ -117,7 +128,11 @@ export default function Home() {
                   </div>
                 </a>
                 {isAdmin && (
-                  <button className="card-delete-btn" onClick={e => handleDelete(e, r.id)}>🗑</button>
+                  <div className="card-admin-btns">
+                    <button className="card-edit-btn" onClick={e => handleToggleHidden(e, r.id, r.hidden)}>{r.hidden ? "👁" : "🙈"}</button>
+                    <a href={`/recipe/${r.id}?edit=1`} className="card-edit-btn">✏️</a>
+                    <button className="card-delete-btn" onClick={e => handleDelete(e, r.id)}>🗑</button>
+                  </div>
                 )}
               </div>
             ))}
@@ -167,8 +182,11 @@ const css = `
   .tag-active { background: var(--terra); color: white; border-color: var(--terra); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.1rem; }
   .card-wrap { position: relative; height: 340px; }
-  .card-delete-btn { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(244,236,216,0.92); color: var(--terra); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
-  .card-delete-btn:hover { background: var(--cream); }
+  .card-wrap-hidden { opacity: 0.45; }
+  .card-admin-btns { position: absolute; top: 0.5rem; left: 0.5rem; display: flex; gap: 0.35rem; z-index: 10; }
+  .card-edit-btn, .card-delete-btn { background: rgba(244,236,216,0.92); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; text-decoration: none; }
+  .card-edit-btn:hover, .card-delete-btn:hover { background: var(--cream); }
+  .card-delete-btn { color: var(--terra); }
   .card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid rgba(30,18,8,0.07); box-shadow: 0 1px 3px rgba(30,18,8,0.06); transition: all 0.22s; display: flex; flex-direction: column; height: 100%; }
   .card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,18,8,0.12); }
   .card-img { width: 100%; height: 170px; object-fit: cover; display: block; flex-shrink: 0; }

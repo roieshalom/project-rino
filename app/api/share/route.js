@@ -42,6 +42,7 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url);
   const sharedUrl = searchParams.get("url");
+  const addedBy = searchParams.get("added_by") ?? null;
 
   if (!sharedUrl) {
     return Response.json({ error: "no-url" }, { status: 400 });
@@ -89,7 +90,12 @@ export async function GET(request) {
           .filter(s => s.length > 0)
           .map(s => ({ name: s, qty: "" }))
         );
-          steps = (recipe.recipeInstructions ?? []).map(s => typeof s === "string" ? s : s.text ?? "");
+          steps = (recipe.recipeInstructions ?? []).flatMap(s => {
+          const raw = typeof s === "string" ? s : s.text ?? "";
+          return raw.split(/<br\s*\/?>/i)
+            .map(t => t.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim())
+            .filter(t => t.length > 0);
+        });
           time = formatDuration(recipe.totalTime ?? recipe.cookTime ?? recipe.prepTime ?? null);
           servings = recipe.recipeYield ? String(recipe.recipeYield) : null;
           parse_status = "schema";
@@ -177,12 +183,11 @@ Reply with only the Hebrew category name, nothing else.`);
     image,
     ingredients,
     steps,
-    time,
-    servings,
     source_url: sharedUrl,
     source_name: hostname,
     category,
     parse_status,
+    added_by: addedBy,
   }]).select().single();
 
   if (error) {
