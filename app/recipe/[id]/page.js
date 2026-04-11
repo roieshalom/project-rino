@@ -1,6 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import EditRecipe from "../../components/EditRecipe";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function RecipePage({ params, searchParams }) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -74,7 +77,7 @@ export default async function RecipePage({ params, searchParams }) {
           <section>
             <h2 className="section-title">👨‍🍳 אופן ההכנה</h2>
             <div className="steps">
-              {recipe.steps.flatMap((step, i) => {
+              {recipe.steps.flatMap((step) => {
                 const raw = typeof step === "string" ? step : step.text ?? "";
                 return raw.split(/<br\s*\/?>/i)
                   .map(t => t.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim())
