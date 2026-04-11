@@ -144,8 +144,8 @@ const css = `
   .tag-active { background: var(--terra); color: white; border-color: var(--terra); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.1rem; }
   .card-wrap { position: relative; }
-  .card-delete-btn { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(184,85,48,0.85); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
-  .card-delete-btn:hover { background: #B85530; }
+  .card-delete-btn { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(244,236,216,0.92); color: var(--terra); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s; }
+  .card-delete-btn:hover { background: var(--cream); }
   .card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid rgba(30,18,8,0.07); box-shadow: 0 1px 3px rgba(30,18,8,0.06); transition: all 0.22s; display: block; }
   .card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,18,8,0.12); }
   .card-img { width: 100%; height: 170px; object-fit: cover; display: block; }
