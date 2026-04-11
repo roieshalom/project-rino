@@ -53,7 +53,7 @@ export default async function RecipePage({ params, searchParams }) {
         <div className="detail-body">
           <h1 className="detail-title">{recipe.title}</h1>
           <div className="detail-pills">
-            {recipe.category && <span className="pill pill-category">{recipe.category}</span>}
+            {recipe.category && <a href={`/?tag=${encodeURIComponent(recipe.category)}`} className="pill pill-category pill-category-link">{recipe.category}</a>}
             {recipe.time && <span className="pill">⏱ {recipe.time}</span>}
             {recipe.servings && <span className="pill">👥 {recipe.servings} מנות</span>}
             {recipe.source_url && <a href={recipe.source_url} target="_blank" rel="noreferrer" className="pill pill-link">📎 {new URL(recipe.source_url).hostname.replace("www.", "")}</a>}
@@ -119,6 +119,8 @@ const css = `
   .detail-body { padding: 1.75rem 1.5rem 4rem; }
   .detail-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 900; line-height: 1.15; margin-bottom: 0.6rem; }
   .pill-category { background: var(--card); color: var(--muted); border: 1.5px solid var(--cream-dark); }
+  .pill-category-link { text-decoration: none; transition: border-color 0.15s, color 0.15s; cursor: pointer; }
+  .pill-category-link:hover { border-color: var(--terra); color: var(--terra); }
 .detail-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
   .pill { padding: 0.3rem 0.8rem; background: var(--cream); border-radius: 100px; font-size: 0.78rem; color: var(--muted); }
   .pill-warn { background: #FFF3CD; color: #8a6a00; }
