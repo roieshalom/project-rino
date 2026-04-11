@@ -204,14 +204,14 @@ const css = `
   .tag-inactive:hover { border-color: var(--terra); color: var(--terra); }
   .tag-active { background: var(--terra); color: white; border-color: var(--terra); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.1rem; }
-  .card-wrap { position: relative; height: 340px; }
-  .card-wrap-hidden { opacity: 0.45; }
+  .card-wrap { position: relative; height: 340px; transition: transform 0.22s, box-shadow 0.22s; border-radius: 14px; }
+  .card-wrap:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,18,8,0.12); }
+  .card-wrap-hidden .card { opacity: 0.45; }
   .card-admin-btns { position: absolute; top: 0.5rem; left: 0.5rem; display: flex; gap: 0.35rem; z-index: 10; }
-  .card-edit-btn, .card-delete-btn { background: rgba(244,236,216,0.92); border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; text-decoration: none; }
+  .card-edit-btn, .card-delete-btn { background: rgba(244,236,216,0.92); border: 1px solid #b6aa8a; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; text-decoration: none; }
   .card-edit-btn:hover, .card-delete-btn:hover { background: var(--cream); }
   .card-delete-btn { color: var(--terra); }
-  .card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid rgba(30,18,8,0.07); box-shadow: 0 1px 3px rgba(30,18,8,0.06); transition: all 0.22s; display: flex; flex-direction: column; height: 100%; }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,18,8,0.12); }
+  .card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid rgba(30,18,8,0.07); box-shadow: 0 1px 3px rgba(30,18,8,0.06); display: flex; flex-direction: column; height: 100%; transition: opacity 0.22s; }
   .card-img { width: 100%; height: 170px; object-fit: cover; display: block; flex-shrink: 0; }
   .card-img-placeholder { width: 100%; height: 170px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; background: var(--cream-dark); flex-shrink: 0; }
   .card-body { padding: 1rem 1.1rem 1.2rem; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
