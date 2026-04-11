@@ -83,7 +83,7 @@ export default function AdminLock() {
         </div>
       )}
 
-      <style>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .admin-lock-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 0.3rem 0.4rem; opacity: 0.45; transition: opacity 0.2s; line-height: 1; }
         .admin-lock-btn:hover { opacity: 1; }
         .admin-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; display: flex; align-items: center; justify-content: center; }
@@ -96,7 +96,7 @@ export default function AdminLock() {
         .admin-submit-btn { background: #B85530; color: white; border: none; border-radius: 100px; padding: 0.55rem 1.75rem; font-family: 'Heebo', sans-serif; font-size: 0.9rem; cursor: pointer; transition: background 0.2s; }
         .admin-submit-btn:hover:not(:disabled) { background: #D4724A; }
         .admin-submit-btn:disabled { opacity: 0.45; cursor: default; }
-      `}</style>
+      ` }} />
     </>
   );
 }

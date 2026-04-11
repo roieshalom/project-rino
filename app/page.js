@@ -45,7 +45,7 @@ export default function Home() {
 
   return (
     <>
-      <style>{css}</style>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
       <div className="grain" />
       {toast && <div className={`toast toast-${toast.type}`}>{toast.msg}</div>}
       <header>
