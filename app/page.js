@@ -7,7 +7,7 @@ const TAGS = ["הכל", "מאפים", "עוגות וקינוחים", "מרקים
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
-  const [activeTag, setActiveTag] = useState("הכל");
+  const [activeTags, setActiveTags] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
@@ -34,7 +34,7 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("new")) setToast({ type: "success", msg: "המתכון נשמר! 🎉" });
     if (params.get("error")) setToast({ type: "error", msg: "לא הצלחנו לשמור את המתכון 😕" });
-    if (params.get("tag")) setActiveTag(decodeURIComponent(params.get("tag")));
+    if (params.get("tag")) setActiveTags([decodeURIComponent(params.get("tag"))]);
     if (params.get("new") || params.get("error") || params.get("tag")) {
       window.history.replaceState({}, "", "/");
       setTimeout(() => setToast(null), 4000);
@@ -63,7 +63,7 @@ export default function Home() {
   const filtered = recipes.filter((r) => {
     if (showHidden) return r.hidden;
     if (!isAdmin && r.hidden) return false;
-    const matchTag = activeTag === "הכל" || r.category === activeTag;
+    const matchTag = activeTags.length === 0 || activeTags.includes(r.category);
     const matchSearch = !search || r.title?.includes(search) || r.description?.includes(search);
     return matchTag && matchSearch;
   });
@@ -111,9 +111,10 @@ export default function Home() {
           )}
         </div>
         <div className="tags">
-          {TAGS.map((t) => (
-            <button key={t} className={`tag ${activeTag === t ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTag(t)}>{t}</button>
-          ))}
+          {TAGS.map((t) => t === "הכל"
+            ? <button key={t} className={`tag ${activeTags.length === 0 ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTags([])}>{t}</button>
+            : <button key={t} className={`tag ${activeTags.includes(t) ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTags(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])}>{t}</button>
+          )}
         </div>
       </div>
       <div className="content">
