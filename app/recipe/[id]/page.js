@@ -52,7 +52,7 @@ export default async function RecipePage({ params, searchParams }) {
       <div className="detail">
         <div className="detail-img-wrap">
           {recipe.image
-            ? <img src={recipe.image} alt={recipe.title} className="detail-img" />
+            ? <img src={recipe.image} alt={recipe.title} className={`detail-img${recipe.hidden ? " detail-img-hidden" : ""}`} />
             : <div className="detail-img-placeholder">🍴</div>
           }
           <RecipeAdminBar recipe={recipe} />
@@ -124,6 +124,7 @@ const css = `
   .detail { max-width: 680px; margin: 0 auto; }
   .detail-img-wrap { position: relative; }
   .detail-img { width: 100%; height: 280px; object-fit: cover; display: block; }
+  .detail-img-hidden { opacity: 0.4; }
   .detail-img-placeholder { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: var(--cream-dark); }
   .detail-body { padding: 1.75rem 1.5rem 4rem; }
   .detail-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 900; line-height: 1.15; margin-bottom: 0.6rem; }

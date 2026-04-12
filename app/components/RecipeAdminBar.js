@@ -9,12 +9,15 @@ export default function RecipeAdminBar({ recipe }) {
   if (!isAdmin) return null;
 
   async function handleToggleHidden() {
+    const next = !hidden;
     await fetch(`/api/recipes/${recipe.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hidden: !hidden }),
+      body: JSON.stringify({ hidden: next }),
     });
-    setHidden(h => !h);
+    setHidden(next);
+    const img = document.querySelector(".detail-img");
+    if (img) img.style.opacity = next ? "0.4" : "1";
   }
 
   async function handleDelete() {
