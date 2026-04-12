@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import EditRecipe from "../../components/EditRecipe";
+import AdminLock from "../../components/AdminLock";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -40,8 +41,9 @@ export default async function RecipePage({ params, searchParams }) {
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <header>
-        <a href="/" className="back">→ כל המתכונים</a>
+        <AdminLock />
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
+        <a href="/" className="back">→ כל המתכונים</a>
       </header>
       {isNew && <div className="new-banner">✨ המתכון נשמר בהצלחה!</div>}
       {isEdit ? <EditRecipe recipe={recipe} /> :
