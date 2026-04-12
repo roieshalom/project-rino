@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import AdminLock, { useAdmin } from "./components/AdminLock";
 
-const TAGS = ["❤️", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה", "בלי תנור"];
+const TAGS = ["❤️", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה"];
 const HEART_TAG = "❤️";
 
 export default function Home() {
@@ -122,20 +122,19 @@ export default function Home() {
       {toast && <div className={`toast toast-${toast.type}`}>{toast.msg}</div>}
       <header>
         <AdminLock />
-        <div className="logo">🫒 <span>ספר</span>המתכונים</div>
-      </header>
-      <div className="hero">
-        <div className="hero-inner">
-        <h1 className="hero-title">כל מה שטעים <em>במקום אחד</em></h1>
-        <div className="hero-count">
+        <div className="header-title-mobile">🫒 <span>ספר</span>המתכונים</div>
+        <div className="header-count">
           <span className="recipe-count recipe-count-desktop">{showHidden ? `${hiddenCount} מוסתרים` : `${filtered.length} מתכונים`}</span>
-          <span className="recipe-count recipe-count-mobile">{showHidden ? `🙈 ${hiddenCount}` : `🍽️ ${filtered.length}`}</span>
           {isAdmin && hiddenCount > 0 && (
             <button className="hidden-count-btn" onClick={() => setShowHidden(v => !v)}>
               {showHidden ? "← כל המתכונים" : `${hiddenCount} מוסתרים`}
             </button>
           )}
         </div>
+      </header>
+      <div className="hero">
+        <div className="hero-inner">
+          <h1 className="hero-title">🫒 ספר המתכונים</h1>
         </div>
       </div>
       <div className="filter-bar">
@@ -258,17 +257,16 @@ const css = `
   a { text-decoration: none; color: inherit; }
   .grain { position: fixed; inset: 0; pointer-events: none; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); z-index: 100; }
   header { background: var(--espresso); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 50; flex-direction: row-reverse; }
-  .logo { font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; font-weight: 900; color: var(--cream); display: flex; align-items: center; gap: 0.4rem; }
-  .logo span { color: var(--terra-light); }
+  .header-count { display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem; }
   .toast { position: fixed; top: 70px; right: 50%; transform: translateX(50%); padding: 0.75rem 1.5rem; border-radius: 100px; font-size: 0.9rem; font-weight: 500; z-index: 300; }
   .toast-success { background: var(--olive); color: white; }
   .toast-error { background: var(--terra); color: white; }
-  .hero { background: var(--espresso); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100px; }
-  .hero-inner { max-width: 1100px; width: 100%; padding: 0 1.25rem; display: flex; align-items: center; justify-content: space-between; direction: rtl; }
+  .hero { background: var(--espresso); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 72px; }
+  .header-title-mobile { display: none; font-family: 'Frank Ruhl Libre', serif; font-size: 1.2rem; font-weight: 900; color: var(--cream); }
+  .header-title-mobile span { color: var(--terra-light); }
+  .hero-inner { max-width: 1100px; width: 100%; padding: 0 1.25rem; direction: rtl; }
   .hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(184,85,48,0.15) 0%, transparent 70%); pointer-events: none; }
   .hero-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 900; color: var(--cream); line-height: 1.05; }
-  .hero-title em { color: var(--terra-light); font-style: normal; }
-  .hero-count { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; flex-shrink: 0; }
   .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--cream); white-space: nowrap; }
   .hidden-count-btn { background: none; border: none; cursor: pointer; font-size: 0.72rem; color: rgba(244,236,216,0.55); font-family: 'Heebo', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
   .hidden-count-btn:hover { color: var(--terra-light); }
@@ -295,11 +293,12 @@ const css = `
   .tags-dropdown-clear:hover { background: rgba(184,85,48,0.08); }
   .recipe-count-mobile { display: none; }
   @media (max-width: 768px) {
+    .hero { display: none; }
+    .header-title-mobile { display: block; }
+    .header-count { display: none; }
     .tags { display: none; }
     .tags-dropdown { display: block; }
     .filter-search { flex: 1; width: auto; }
-    .recipe-count-desktop { display: none; }
-    .recipe-count-mobile { display: block; }
   }
   .tag { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; cursor: pointer; border: 1.5px solid transparent; font-family: 'Heebo', sans-serif; transition: all 0.15s; }
   .tag-inactive { background: var(--card); color: var(--muted); border-color: var(--cream-dark); }
