@@ -3,6 +3,7 @@ import EditRecipe from "../../components/EditRecipe";
 import AdminLock from "../../components/AdminLock";
 import RecipeAdminBar from "../../components/RecipeAdminBar";
 import UploaderPill from "../../components/UploaderPill";
+import HeartButton from "../../components/HeartButton";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -55,6 +56,7 @@ export default async function RecipePage({ params, searchParams }) {
             ? <img src={recipe.image} alt={recipe.title} className={`detail-img${recipe.hidden ? " detail-img-hidden" : ""}`} />
             : <div className="detail-img-placeholder">🍴</div>
           }
+          <div className="detail-img-top-right"><HeartButton id={recipe.id} /></div>
           <RecipeAdminBar recipe={recipe} />
         </div>
         <div className="detail-body">
@@ -123,6 +125,7 @@ const css = `
   .new-banner { background: var(--olive); color: white; text-align: center; padding: 0.6rem; font-size: 0.88rem; }
   .detail { max-width: 680px; margin: 0 auto; }
   .detail-img-wrap { position: relative; }
+  .detail-img-top-right { position: absolute; top: 0.6rem; right: 0.6rem; z-index: 10; }
   .detail-img { width: 100%; height: 280px; object-fit: cover; display: block; }
   .detail-img-hidden { opacity: 0.4; }
   .detail-img-placeholder { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: var(--cream-dark); }

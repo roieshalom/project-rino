@@ -181,7 +181,7 @@ export default function Home() {
           <div className="grid" ref={gridRef}>
             {filtered.map((r) => (
               <div key={r.id} data-id={r.id} className={`card-wrap${r.hidden ? " card-wrap-hidden" : ""}`}>
-                <button className={`card-heart-btn${hearts.includes(r.id) ? " card-heart-active" : ""}`} onClick={e => toggleHeart(e, r.id)}>{hearts.includes(r.id) ? "❤️" : "🩶"}</button>
+                <button className={`card-heart-btn${hearts.includes(r.id) ? " card-heart-active" : ""}`} onClick={e => toggleHeart(e, r.id)}><span className={hearts.includes(r.id) ? "heart-lit" : "heart-unlit"}>{hearts.includes(r.id) ? "❤️" : "♡"}</span></button>
                 <a href={`/recipe/${r.id}`} className="card">
                   {r.image ? <img src={r.image} alt={r.title} className="card-img" /> : <div className="card-img-placeholder">🍴</div>}
                   <div className="card-body">
@@ -258,7 +258,9 @@ const css = `
   .card-wrap-hidden .card { opacity: 0.45; }
   .card-heart-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(244,236,216,0.92); border: 1px solid #b6aa8a; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s, transform 0.15s; }
   .card-heart-btn:hover { background: var(--cream); transform: scale(1.15); }
+  .card-heart-btn:hover .heart-unlit { opacity: 0.7; }
   .card-heart-active { transform: scale(1.1); }
+  .heart-unlit { opacity: 0.5; color: var(--terra); font-size: 1.1rem; transition: opacity 0.2s; }
   .card-admin-btns { position: absolute; top: 0.5rem; left: 0.5rem; display: flex; gap: 0.35rem; z-index: 10; }
   .card-edit-btn, .card-delete-btn { background: rgba(244,236,216,0.92); border: 1px solid #b6aa8a; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; text-decoration: none; }
   .card-edit-btn:hover, .card-delete-btn:hover { background: var(--cream); }
