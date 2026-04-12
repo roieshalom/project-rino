@@ -193,6 +193,7 @@ export default function Home() {
                       {r.source_url && <a href={r.source_url} target="_blank" rel="noreferrer" className="meta-item meta-source" onClick={e => e.stopPropagation()}>📎</a>}
                       {r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
                       {r.category && <span className="meta-category">{r.category}</span>}
+                      {isAdmin && r.added_by && <span className="meta-uploader">{r.added_by}</span>}
                     </div>
                   </div>
                 </a>
@@ -271,6 +272,7 @@ const css = `
   .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.75rem; flex-shrink: 0; }
   .card-meta { display: flex; gap: 0.5rem; font-size: 0.72rem; color: var(--muted); flex-wrap: nowrap; align-items: center; margin-top: auto; overflow: hidden; }
   .meta-category { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; background: var(--card); color: var(--muted); border: 1.5px solid var(--cream-dark); font-family: 'Heebo', sans-serif; white-space: nowrap; margin-right: auto; }
+  .meta-uploader { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; background: var(--card); color: var(--muted); border: 1.5px solid var(--cream-dark); font-family: 'Heebo', sans-serif; white-space: nowrap; }
   .meta-badge { background: #FFF3CD; color: #8a6a00; border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.65rem; }
   .meta-source { text-decoration: none; }
   .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
