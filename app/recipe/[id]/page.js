@@ -64,7 +64,7 @@ export default async function RecipePage({ params, searchParams }) {
           <div className="detail-pills">
             {recipe.category && <a href={`/?tag=${encodeURIComponent(recipe.category)}`} className="pill pill-category pill-category-link">{recipe.category}</a>}
             <UploaderPill name={recipe.added_by} />
-            {recipe.time && <span className="pill">⏱ {recipe.time}</span>}
+            {recipe.time && <span className="pill">🕐 {recipe.time}</span>}
             {recipe.servings && <span className="pill">👥 {recipe.servings} מנות</span>}
             {recipe.source_url && <a href={recipe.source_url} target="_blank" rel="noreferrer" className="pill pill-link">📎 {new URL(recipe.source_url).hostname.replace("www.", "")}</a>}
             {recipe.parse_status === "fallback" && <span className="pill pill-warn">⚠️ טעון עריכה</span>}
