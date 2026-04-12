@@ -1,6 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import EditRecipe from "../../components/EditRecipe";
 import AdminLock from "../../components/AdminLock";
+import RecipeAdminBar from "../../components/RecipeAdminBar";
+import UploaderPill from "../../components/UploaderPill";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -48,14 +50,18 @@ export default async function RecipePage({ params, searchParams }) {
       {isNew && <div className="new-banner">✨ המתכון נשמר בהצלחה!</div>}
       {isEdit ? <EditRecipe recipe={recipe} /> :
       <div className="detail">
-        {recipe.image
-          ? <img src={recipe.image} alt={recipe.title} className="detail-img" />
-          : <div className="detail-img-placeholder">🍴</div>
-        }
+        <div className="detail-img-wrap">
+          {recipe.image
+            ? <img src={recipe.image} alt={recipe.title} className="detail-img" />
+            : <div className="detail-img-placeholder">🍴</div>
+          }
+          <RecipeAdminBar recipe={recipe} />
+        </div>
         <div className="detail-body">
           <h1 className="detail-title">{recipe.title}</h1>
           <div className="detail-pills">
             {recipe.category && <a href={`/?tag=${encodeURIComponent(recipe.category)}`} className="pill pill-category pill-category-link">{recipe.category}</a>}
+            <UploaderPill name={recipe.added_by} />
             {recipe.time && <span className="pill">⏱ {recipe.time}</span>}
             {recipe.servings && <span className="pill">👥 {recipe.servings} מנות</span>}
             {recipe.source_url && <a href={recipe.source_url} target="_blank" rel="noreferrer" className="pill pill-link">📎 {new URL(recipe.source_url).hostname.replace("www.", "")}</a>}
@@ -116,6 +122,7 @@ const css = `
   .logo span { color: var(--terra-light); }
   .new-banner { background: var(--olive); color: white; text-align: center; padding: 0.6rem; font-size: 0.88rem; }
   .detail { max-width: 680px; margin: 0 auto; }
+  .detail-img-wrap { position: relative; }
   .detail-img { width: 100%; height: 280px; object-fit: cover; display: block; }
   .detail-img-placeholder { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: var(--cream-dark); }
   .detail-body { padding: 1.75rem 1.5rem 4rem; }
@@ -126,6 +133,7 @@ const css = `
 .detail-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
   .pill { padding: 0.3rem 0.8rem; background: var(--cream); border-radius: 100px; font-size: 0.78rem; color: var(--muted); }
   .pill-warn { background: #FFF3CD; color: #8a6a00; }
+  .pill-uploader { background: var(--cream); color: var(--muted); }
   .pill-link { text-decoration: none; color: var(--muted); }
   .detail-desc { font-size: 0.95rem; line-height: 1.65; color: var(--muted); margin-bottom: 2rem; }
   .section-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.15rem; font-weight: 700; margin: 1.75rem 0 0.75rem; }
