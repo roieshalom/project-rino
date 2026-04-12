@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import AdminLock, { useAdmin } from "./components/AdminLock";
+import StatsButton from "./components/StatsButton";
 
 const TAGS = ["❤️", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה"];
 const HEART_TAG = "❤️";
@@ -121,7 +122,10 @@ export default function Home() {
       <div className="grain" />
       {toast && <div className={`toast toast-${toast.type}`}>{toast.msg}</div>}
       <header>
-        <AdminLock />
+        <div style={{display:"flex",alignItems:"center"}}>
+          <StatsButton />
+          <AdminLock />
+        </div>
         <div className="header-title-mobile">🫒 <span>ספר</span>המתכונים</div>
         <div className="header-count">
           <span className="recipe-count recipe-count-desktop">{showHidden ? `${hiddenCount} מוסתרים` : `${filtered.length} מתכונים`}</span>

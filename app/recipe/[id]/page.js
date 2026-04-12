@@ -4,6 +4,7 @@ import AdminLock from "../../components/AdminLock";
 import RecipeAdminBar from "../../components/RecipeAdminBar";
 import UploaderPill from "../../components/UploaderPill";
 import HeartButton from "../../components/HeartButton";
+import StatsButton from "../../components/StatsButton";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -46,7 +47,10 @@ export default async function RecipePage({ params, searchParams }) {
       <header>
         <a href="/" className="back">→ כל המתכונים</a>
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
-        <AdminLock />
+        <div style={{display:"flex",alignItems:"center"}}>
+          <StatsButton />
+          <AdminLock />
+        </div>
       </header>
       {isNew && <div className="new-banner">✨ המתכון נשמר בהצלחה!</div>}
       {isEdit ? <EditRecipe recipe={recipe} /> :
