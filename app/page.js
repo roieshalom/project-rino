@@ -13,7 +13,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [showHidden, setShowHidden] = useState(false);
   const [hearts, setHearts] = useState([]);
   const gridRef = useRef();
@@ -58,7 +57,7 @@ export default function Home() {
 
   useEffect(() => {
     function onKey(e) {
-      if (e.key === "Escape") { setSearchOpen(false); setSearch(""); }
+      if (e.key === "Escape") { setSearch(""); }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -125,37 +124,32 @@ export default function Home() {
         <div className="logo">🫒 <span>ספר</span>המתכונים</div>
       </header>
       <div className="hero">
-        {searchOpen ? (
-          <div className={`search-bar hero-search${searchFocused ? " search-bar-focused" : ""}`}>
-            <button
-              className={`search-icon-btn${search ? " search-icon-active" : ""} search-icon-focused`}
-              onClick={() => { setSearch(""); setSearchOpen(false); }}
-              tabIndex={-1}
-            >✕</button>
-            <input
-              autoFocus
-              placeholder="חפש מתכון..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-            />
-          </div>
-        ) : (
-          <div className="hero-title-row" onMouseEnter={e => e.currentTarget.classList.add("hovered")} onMouseLeave={e => e.currentTarget.classList.remove("hovered")}>
-            <h1 className="hero-title">כל מה שטעים <em>במקום אחד</em></h1>
-            <button className="hero-search-btn" onClick={() => setSearchOpen(true)} aria-label="חיפוש">🔍</button>
-          </div>
-        )}
-      </div>
-      <div className="filter-bar">
-        <div className="recipe-count-wrap">
+        <div className="hero-inner">
+        <h1 className="hero-title">כל מה שטעים <em>במקום אחד</em></h1>
+        <div className="hero-count">
           <span className="recipe-count">{showHidden ? `${hiddenCount} מוסתרים` : `${filtered.length} מתכונים`}</span>
           {isAdmin && hiddenCount > 0 && (
             <button className="hidden-count-btn" onClick={() => setShowHidden(v => !v)}>
               {showHidden ? "← כל המתכונים" : `${hiddenCount} מוסתרים`}
             </button>
           )}
+        </div>
+        </div>
+      </div>
+      <div className="filter-bar">
+        <div className={`search-bar filter-search${searchFocused ? " search-bar-focused" : ""}`}>
+          <button
+            className={`search-icon-btn${search ? " search-icon-active" : ""}`}
+            onClick={() => setSearch("")}
+            tabIndex={-1}
+          >{search ? "✕" : "🔍"}</button>
+          <input
+            placeholder="חפש מתכון..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+          />
         </div>
         <div className="tags">
           {TAGS.map((t) => (
@@ -267,30 +261,25 @@ const css = `
   .toast { position: fixed; top: 70px; right: 50%; transform: translateX(50%); padding: 0.75rem 1.5rem; border-radius: 100px; font-size: 0.9rem; font-weight: 500; z-index: 300; }
   .toast-success { background: var(--olive); color: white; }
   .toast-error { background: var(--terra); color: white; }
-  .hero { background: var(--espresso); padding: 0 1.5rem; text-align: center; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 120px; }
+  .hero { background: var(--espresso); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100px; }
+  .hero-inner { max-width: 1100px; width: 100%; padding: 0 1.25rem; display: flex; align-items: center; justify-content: space-between; direction: rtl; }
   .hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(184,85,48,0.15) 0%, transparent 70%); pointer-events: none; }
-  .hero-title-row { display: inline-flex; align-items: center; gap: 0.6rem; cursor: default; }
-  .hero-title-row.hovered .hero-title { color: var(--cream-dark); }
-  .hero-title-row.hovered .hero-search-btn { opacity: 1; }
-  .hero-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(2.2rem, 8vw, 4rem); font-weight: 900; color: var(--cream); line-height: 1.05; transition: color 0.2s; }
+  .hero-title { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 900; color: var(--cream); line-height: 1.05; }
   .hero-title em { color: var(--terra-light); font-style: normal; }
-  .hero-search-btn { background: none; border: none; cursor: pointer; font-size: clamp(1.8rem, 6vw, 3.2rem); line-height: 1; opacity: 0.35; transition: opacity 0.2s; padding: 0; }
-  .hero-search-btn:hover { opacity: 1; }
-  .search-bar { max-width: 440px; margin: 0 auto; position: relative; }
-  .hero-search { max-width: 600px; margin: 0 auto; width: 100%; }
-  .search-bar input { width: 100%; padding: 0.85rem 1.2rem 0.85rem 3rem; border-radius: 100px; border: 1px solid rgba(244,236,216,0.15); background: rgba(244,236,216,0.1); color: var(--cream); font-family: 'Heebo', sans-serif; font-size: 0.9rem; outline: none; direction: rtl; text-align: right; transition: border-color 0.2s; }
-  .search-bar input::placeholder { color: rgba(244,236,216,0.4); }
-  .search-bar-focused input { border-color: rgba(244,236,216,0.6); }
-  .search-icon-btn { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 0.95rem; opacity: 0.4; transition: opacity 0.2s; line-height: 1; padding: 0.2rem; color: var(--cream); }
-  .search-icon-btn.search-icon-focused { opacity: 0.85; }
-  .search-icon-btn.search-icon-active { opacity: 1; font-size: 0.8rem; }
-  .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.85rem 1.25rem; display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; gap: 1rem; }
-  .recipe-count-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; flex-shrink: 0; }
-  .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--espresso); white-space: nowrap; }
-  .hidden-count-btn { background: none; border: none; cursor: pointer; font-size: 0.72rem; color: var(--muted); font-family: 'Heebo', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
-  .hidden-count-btn:hover { color: var(--terra); }
+  .hero-count { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; flex-shrink: 0; }
+  .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--cream); white-space: nowrap; }
+  .hidden-count-btn { background: none; border: none; cursor: pointer; font-size: 0.72rem; color: rgba(244,236,216,0.55); font-family: 'Heebo', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
+  .hidden-count-btn:hover { color: var(--terra-light); }
+  .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.75rem 1.25rem; display: flex; flex-direction: row; direction: rtl; align-items: center; gap: 0.75rem; }
+  .search-bar { position: relative; flex-shrink: 0; }
+  .filter-search { width: 200px; }
+  .filter-search input { width: 100%; padding: 0.55rem 1rem 0.55rem 2.4rem; border-radius: 100px; border: 1.5px solid var(--cream-dark); background: var(--card); color: var(--espresso); font-family: 'Heebo', sans-serif; font-size: 0.85rem; outline: none; direction: rtl; text-align: right; transition: border-color 0.2s; }
+  .filter-search input::placeholder { color: var(--muted); }
+  .search-bar-focused.filter-search input { border-color: var(--terra); }
+  .search-icon-btn { position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 0.85rem; opacity: 0.45; transition: opacity 0.2s; line-height: 1; padding: 0.15rem; color: var(--espresso); }
+  .search-icon-btn.search-icon-active { opacity: 0.7; font-size: 0.75rem; }
   .content { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1.25rem 2rem; }
-  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; direction: rtl; }
   .tags-dropdown { display: none; position: relative; }
   .tags-dropdown-btn { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.45rem 0.85rem; border: 1.5px solid var(--cream-dark); border-radius: 10px; background: var(--card); font-family: 'Heebo', sans-serif; font-size: 0.85rem; color: var(--espresso); cursor: pointer; min-width: 130px; transition: border-color 0.15s; }
   .tags-dropdown-btn:focus { outline: none; border-color: var(--terra); }
