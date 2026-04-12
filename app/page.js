@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import AdminLock, { useAdmin } from "./components/AdminLock";
 
-const TAGS = ["הכל", "❤️", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה", "בלי תנור"];
+const TAGS = ["❤️", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה", "בלי תנור"];
 const HEART_TAG = "❤️";
 
 export default function Home() {
@@ -158,11 +158,11 @@ export default function Home() {
           )}
         </div>
         <div className="tags">
-          {TAGS.map((t) => t === "הכל"
-            ? <button key={t} className={`tag ${activeTags.length === 0 ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTags([])}>{t}</button>
-            : <button key={t} className={`tag ${activeTags.includes(t) ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTags(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])}>{t}</button>
-          )}
+          {TAGS.map((t) => (
+            <button key={t} className={`tag ${activeTags.includes(t) ? "tag-active" : "tag-inactive"}`} onClick={() => setActiveTags(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])}>{t}</button>
+          ))}
         </div>
+        <TagsDropdown activeTags={activeTags} setActiveTags={setActiveTags} />
       </div>
       <div className="content">
         {loading ? (
@@ -188,7 +188,7 @@ export default function Home() {
                     <div className="card-title">{r.title}</div>
                     {r.description && <div className="card-desc">{r.description}</div>}
                     <div className="card-meta">
-                      {r.time && <span className="meta-item">⏱ {r.time}</span>}
+                      {r.time && <span className="meta-item">🕐 {r.time}</span>}
                       {r.servings && <span className="meta-item">👥 {r.servings}</span>}
 {r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
                       {r.category && <span className="meta-category">{r.category}</span>}
@@ -209,6 +209,49 @@ export default function Home() {
         )}
       </div>
     </>
+  );
+}
+
+function TagsDropdown({ activeTags, setActiveTags }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef();
+
+  useEffect(() => {
+    function onClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  const label = activeTags.length === 0 ? "קטגוריות" : activeTags.join(", ");
+
+  return (
+    <div className="tags-dropdown" ref={ref}>
+      <button className="tags-dropdown-btn" onClick={() => setOpen(v => !v)}>
+        <span className="tags-dropdown-label">{label}</span>
+        <span className="tags-dropdown-arrow">{open ? "▲" : "▼"}</span>
+      </button>
+      {open && (
+        <div className="tags-dropdown-menu">
+          {TAGS.map(t => (
+            <label key={t} className="tags-dropdown-item">
+              <input
+                type="checkbox"
+                checked={activeTags.includes(t)}
+                onChange={() => setActiveTags(prev =>
+                  prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]
+                )}
+              />
+              {t}
+            </label>
+          ))}
+          {activeTags.length > 0 && (
+            <button className="tags-dropdown-clear" onClick={() => { setActiveTags([]); setOpen(false); }}>נקה הכל</button>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -248,6 +291,21 @@ const css = `
   .hidden-count-btn:hover { color: var(--terra); }
   .content { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1.25rem 2rem; }
   .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tags-dropdown { display: none; position: relative; }
+  .tags-dropdown-btn { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.45rem 0.85rem; border: 1.5px solid var(--cream-dark); border-radius: 10px; background: var(--card); font-family: 'Heebo', sans-serif; font-size: 0.85rem; color: var(--espresso); cursor: pointer; min-width: 130px; transition: border-color 0.15s; }
+  .tags-dropdown-btn:focus { outline: none; border-color: var(--terra); }
+  .tags-dropdown-label { flex: 1; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tags-dropdown-arrow { font-size: 0.65rem; color: var(--muted); flex-shrink: 0; }
+  .tags-dropdown-menu { position: absolute; top: calc(100% + 6px); right: 0; background: var(--card); border: 1.5px solid var(--cream-dark); border-radius: 12px; box-shadow: 0 8px 24px rgba(30,18,8,0.12); z-index: 200; min-width: 170px; padding: 0.4rem 0; }
+  .tags-dropdown-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 1rem; font-family: 'Heebo', sans-serif; font-size: 0.88rem; color: var(--espresso); cursor: pointer; direction: rtl; }
+  .tags-dropdown-item:hover { background: var(--cream); }
+  .tags-dropdown-item input[type="checkbox"] { accent-color: var(--terra); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+  .tags-dropdown-clear { display: block; width: calc(100% - 2rem); margin: 0.4rem 1rem 0.2rem; padding: 0.4rem 0; border: 1.5px solid var(--terra); border-radius: 8px; background: none; color: var(--terra); font-family: 'Heebo', sans-serif; font-size: 0.8rem; cursor: pointer; transition: background 0.15s; }
+  .tags-dropdown-clear:hover { background: rgba(184,85,48,0.08); }
+  @media (max-width: 600px) {
+    .tags { display: none; }
+    .tags-dropdown { display: block; }
+  }
   .tag { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; cursor: pointer; border: 1.5px solid transparent; font-family: 'Heebo', sans-serif; transition: all 0.15s; }
   .tag-inactive { background: var(--card); color: var(--muted); border-color: var(--cream-dark); }
   .tag-inactive:hover { border-color: var(--terra); color: var(--terra); }
