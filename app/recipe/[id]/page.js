@@ -41,9 +41,9 @@ export default async function RecipePage({ params, searchParams }) {
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <header>
-        <AdminLock />
-        <div className="logo">🫒 <span>ספר</span>המתכונים</div>
         <a href="/" className="back">→ כל המתכונים</a>
+        <div className="logo">🫒 <span>ספר</span>המתכונים</div>
+        <AdminLock />
       </header>
       {isNew && <div className="new-banner">✨ המתכון נשמר בהצלחה!</div>}
       {isEdit ? <EditRecipe recipe={recipe} /> :
