@@ -190,8 +190,7 @@ export default function Home() {
                     <div className="card-meta">
                       {r.time && <span className="meta-item">⏱ {r.time}</span>}
                       {r.servings && <span className="meta-item">👥 {r.servings}</span>}
-                      {r.source_url && <a href={r.source_url} target="_blank" rel="noreferrer" className="meta-item meta-source" onClick={e => e.stopPropagation()}>📎</a>}
-                      {r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
+{r.parse_status === "fallback" && <span className="meta-badge">טעון עריכה</span>}
                       {r.category && <span className="meta-category">{r.category}</span>}
                       {isAdmin && r.added_by && <span className="meta-uploader">{r.added_by}</span>}
                     </div>
