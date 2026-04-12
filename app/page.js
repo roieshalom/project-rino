@@ -128,7 +128,8 @@ export default function Home() {
         <div className="hero-inner">
         <h1 className="hero-title">כל מה שטעים <em>במקום אחד</em></h1>
         <div className="hero-count">
-          <span className="recipe-count">{showHidden ? `${hiddenCount} מוסתרים` : `${filtered.length} מתכונים`}</span>
+          <span className="recipe-count recipe-count-desktop">{showHidden ? `${hiddenCount} מוסתרים` : `${filtered.length} מתכונים`}</span>
+          <span className="recipe-count recipe-count-mobile">{showHidden ? `🙈 ${hiddenCount}` : `🍽️ ${filtered.length}`}</span>
           {isAdmin && hiddenCount > 0 && (
             <button className="hidden-count-btn" onClick={() => setShowHidden(v => !v)}>
               {showHidden ? "← כל המתכונים" : `${hiddenCount} מוסתרים`}
@@ -271,7 +272,7 @@ const css = `
   .recipe-count { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 700; color: var(--cream); white-space: nowrap; }
   .hidden-count-btn { background: none; border: none; cursor: pointer; font-size: 0.72rem; color: rgba(244,236,216,0.55); font-family: 'Heebo', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 2px; transition: color 0.15s; }
   .hidden-count-btn:hover { color: var(--terra-light); }
-  .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.75rem 1.25rem; display: flex; flex-direction: row; direction: rtl; align-items: center; gap: 0.75rem; }
+  .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.75rem 1.25rem; display: flex; flex-direction: row; direction: rtl; align-items: center; gap: 0.75rem; justify-content: space-between; }
   .search-bar { position: relative; flex-shrink: 0; }
   .filter-search { width: 270px; }
   .filter-search input { width: 100%; padding: 0.55rem 1rem 0.55rem 2.4rem; border-radius: 100px; border: 1.5px solid var(--cream-dark); background: var(--card); color: var(--espresso); font-family: 'Heebo', sans-serif; font-size: 0.85rem; outline: none; direction: rtl; text-align: right; transition: border-color 0.2s; }
@@ -292,9 +293,13 @@ const css = `
   .tags-dropdown-item input[type="checkbox"] { accent-color: var(--terra); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
   .tags-dropdown-clear { display: block; width: calc(100% - 2rem); margin: 0.4rem 1rem 0.2rem; padding: 0.4rem 0; border: 1.5px solid var(--terra); border-radius: 8px; background: none; color: var(--terra); font-family: 'Heebo', sans-serif; font-size: 0.8rem; cursor: pointer; transition: background 0.15s; }
   .tags-dropdown-clear:hover { background: rgba(184,85,48,0.08); }
-  @media (max-width: 600px) {
+  .recipe-count-mobile { display: none; }
+  @media (max-width: 768px) {
     .tags { display: none; }
     .tags-dropdown { display: block; }
+    .filter-search { flex: 1; width: auto; }
+    .recipe-count-desktop { display: none; }
+    .recipe-count-mobile { display: block; }
   }
   .tag { padding: 0.3rem 0.85rem; border-radius: 100px; font-size: 0.78rem; cursor: pointer; border: 1.5px solid transparent; font-family: 'Heebo', sans-serif; transition: all 0.15s; }
   .tag-inactive { background: var(--card); color: var(--muted); border-color: var(--cream-dark); }
