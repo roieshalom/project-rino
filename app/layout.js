@@ -1,6 +1,20 @@
 export const metadata = {
     title: "ספר המתכונים",
     description: "אוסף המתכונים של טלי, רינו, ורועי",
+    openGraph: {
+        title: "ספר המתכונים",
+        description: "אוסף המתכונים של טלי, רינו, ורועי",
+        images: [{ url: "https://project-rino.vercel.app/wa.png", width: 1200, height: 630 }],
+        siteName: "ספר המתכונים",
+        locale: "he_IL",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "ספר המתכונים",
+        description: "אוסף המתכונים של טלי, רינו, ורועי",
+        images: ["https://project-rino.vercel.app/wa.png"],
+    },
 };
 
 export default function RootLayout({ children }) {
