@@ -106,7 +106,8 @@ export default function Home() {
     const otherTags = activeTags.filter(t => t !== HEART_TAG);
     if (heartOnly && !hearts.includes(r.id)) return false;
     const matchTag = otherTags.length === 0 || otherTags.includes(r.category);
-    const matchSearch = !search || r.title?.includes(search) || r.description?.includes(search);
+    const matchSearch = !search || r.title?.includes(search) || r.description?.includes(search) ||
+      (Array.isArray(r.ingredients) && r.ingredients.some(ing => (typeof ing === "string" ? ing : ing.name ?? "").includes(search)));
     return matchTag && matchSearch;
   }).sort((a, b) => {
     const aH = hearts.includes(a.id) ? 1 : 0;
@@ -144,7 +145,7 @@ export default function Home() {
             tabIndex={-1}
           >{search ? "✕" : "🔍"}</button>
           <input
-            placeholder="חפש מתכון..."
+            placeholder="חפש מתכון, מילה או מרכיב"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onFocus={() => setSearchFocused(true)}
@@ -272,7 +273,7 @@ const css = `
   .hidden-count-btn:hover { color: var(--terra-light); }
   .filter-bar { max-width: 1100px; margin: 0 auto; padding: 0.75rem 1.25rem; display: flex; flex-direction: row; direction: rtl; align-items: center; gap: 0.75rem; }
   .search-bar { position: relative; flex-shrink: 0; }
-  .filter-search { width: 200px; }
+  .filter-search { width: 270px; }
   .filter-search input { width: 100%; padding: 0.55rem 1rem 0.55rem 2.4rem; border-radius: 100px; border: 1.5px solid var(--cream-dark); background: var(--card); color: var(--espresso); font-family: 'Heebo', sans-serif; font-size: 0.85rem; outline: none; direction: rtl; text-align: right; transition: border-color 0.2s; }
   .filter-search input::placeholder { color: var(--muted); }
   .search-bar-focused.filter-search input { border-color: var(--terra); }
