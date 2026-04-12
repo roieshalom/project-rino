@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AdminLock, { useAdmin } from "./components/AdminLock";
 
-const TAGS = ["הכל", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה", "בלי תנור"];
+const TAGS = ["הכל", "❤️", "מאפים", "עוגות וקינוחים", "מרקים", "סלטים", "בשרים", "תוספות", "פסטה", "בלי תנור"];
+const HEART_TAG = "❤️";
 
 export default function Home() {
   const [recipes, setRecipes] = useState([]);
@@ -14,7 +15,46 @@ export default function Home() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [showHidden, setShowHidden] = useState(false);
+  const [hearts, setHearts] = useState([]);
+  const gridRef = useRef();
   const isAdmin = useAdmin();
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("hearted_recipes") || "[]");
+    setHearts(saved);
+  }, []);
+
+  function toggleHeart(e, id) {
+    e.preventDefault();
+    // FLIP: capture positions before update
+    const cards = gridRef.current?.querySelectorAll("[data-id]");
+    const before = {};
+    cards?.forEach(el => { before[el.dataset.id] = el.getBoundingClientRect(); });
+
+    setHearts(prev => {
+      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id];
+      localStorage.setItem("hearted_recipes", JSON.stringify(next));
+      return next;
+    });
+
+    // FLIP: animate from old to new positions after DOM settles
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        cards?.forEach(el => {
+          const old = before[el.dataset.id];
+          if (!old) return;
+          const now = el.getBoundingClientRect();
+          const dy = old.top - now.top;
+          const dx = old.left - now.left;
+          if (Math.abs(dy) < 1 && Math.abs(dx) < 1) return;
+          el.animate([
+            { transform: `translate(${dx}px, ${dy}px)`, easing: "ease-out" },
+            { transform: "translate(0, 0)" }
+          ], { duration: 350, fill: "none" });
+        });
+      });
+    });
+  }
 
   useEffect(() => {
     function onKey(e) {
@@ -63,9 +103,16 @@ export default function Home() {
   const filtered = recipes.filter((r) => {
     if (showHidden) return r.hidden;
     if (!isAdmin && r.hidden) return false;
-    const matchTag = activeTags.length === 0 || activeTags.includes(r.category);
+    const heartOnly = activeTags.includes(HEART_TAG);
+    const otherTags = activeTags.filter(t => t !== HEART_TAG);
+    if (heartOnly && !hearts.includes(r.id)) return false;
+    const matchTag = otherTags.length === 0 || otherTags.includes(r.category);
     const matchSearch = !search || r.title?.includes(search) || r.description?.includes(search);
     return matchTag && matchSearch;
+  }).sort((a, b) => {
+    const aH = hearts.includes(a.id) ? 1 : 0;
+    const bH = hearts.includes(b.id) ? 1 : 0;
+    return bH - aH;
   });
 
   return (
@@ -131,9 +178,10 @@ export default function Home() {
         ) : filtered.length === 0 ? (
           <div className="empty-state"><div className="icon">🍽️</div><h3>אין מתכונים עדיין</h3><p>שתף קישור מהנייד כדי להתחיל</p></div>
         ) : (
-          <div className="grid">
+          <div className="grid" ref={gridRef}>
             {filtered.map((r) => (
-              <div key={r.id} className={`card-wrap${r.hidden ? " card-wrap-hidden" : ""}`}>
+              <div key={r.id} data-id={r.id} className={`card-wrap${r.hidden ? " card-wrap-hidden" : ""}`}>
+                <button className={`card-heart-btn${hearts.includes(r.id) ? " card-heart-active" : ""}`} onClick={e => toggleHeart(e, r.id)}>{hearts.includes(r.id) ? "❤️" : "🩶"}</button>
                 <a href={`/recipe/${r.id}`} className="card">
                   {r.image ? <img src={r.image} alt={r.title} className="card-img" /> : <div className="card-img-placeholder">🍴</div>}
                   <div className="card-body">
@@ -208,6 +256,9 @@ const css = `
   .card-wrap { position: relative; height: 340px; transition: transform 0.22s, box-shadow 0.22s; border-radius: 14px; }
   .card-wrap:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,18,8,0.12); }
   .card-wrap-hidden .card { opacity: 0.45; }
+  .card-heart-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(244,236,216,0.92); border: 1px solid #b6aa8a; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s, transform 0.15s; }
+  .card-heart-btn:hover { background: var(--cream); transform: scale(1.15); }
+  .card-heart-active { transform: scale(1.1); }
   .card-admin-btns { position: absolute; top: 0.5rem; left: 0.5rem; display: flex; gap: 0.35rem; z-index: 10; }
   .card-edit-btn, .card-delete-btn { background: rgba(244,236,216,0.92); border: 1px solid #b6aa8a; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; text-decoration: none; }
   .card-edit-btn:hover, .card-delete-btn:hover { background: var(--cream); }
