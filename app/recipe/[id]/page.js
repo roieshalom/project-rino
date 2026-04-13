@@ -39,6 +39,7 @@ export default async function RecipePage({ params, searchParams }) {
   }
 
   const isNew = searchParams?.new === "1";
+  const isWarn = searchParams?.warn === "1";
   const isEdit = searchParams?.edit === "1";
 
   return (
@@ -52,7 +53,8 @@ export default async function RecipePage({ params, searchParams }) {
           <AdminLock />
         </div>
       </header>
-      {isNew && <div className="new-banner">✨ המתכון נשמר בהצלחה!</div>}
+      {isNew && !isWarn && <div className="new-banner">✨ המתכון נשמר בהצלחה!</div>}
+      {isNew && isWarn && <div className="new-banner new-banner-warn">⚠️ המתכון נשמר, אבל הנתונים לא תקינים — כדאי לערוך או למחוק</div>}
       {isEdit ? <EditRecipe recipe={recipe} /> :
       <div className="detail">
         <div className="detail-img-wrap">
@@ -127,6 +129,7 @@ const css = `
   .logo { font-family: 'Frank Ruhl Libre', serif; font-size: 1.3rem; font-weight: 900; color: var(--cream); display: flex; align-items: center; gap: 0.3rem; }
   .logo span { color: var(--terra-light); }
   .new-banner { background: var(--olive); color: white; text-align: center; padding: 0.6rem; font-size: 0.88rem; }
+  .new-banner-warn { background: #B85530; }
   .detail { max-width: 680px; margin: 0 auto; }
   .detail-img-wrap { position: relative; }
   .detail-img-top-right { position: absolute; top: 0.6rem; right: 0.6rem; z-index: 10; }

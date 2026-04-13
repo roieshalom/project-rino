@@ -73,7 +73,8 @@ export default function Home() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("new")) setToast({ type: "success", msg: "המתכון נשמר! 🎉" });
-    if (params.get("error")) setToast({ type: "error", msg: "לא הצלחנו לשמור את המתכון 😕" });
+    if (params.get("error") === "parse-failed") setToast({ type: "error", msg: "לא הצלחנו לחלץ מתכון מהקישור — לא נשמר 🚫" });
+    else if (params.get("error")) setToast({ type: "error", msg: "לא הצלחנו לשמור את המתכון 😕" });
     if (params.get("tag")) setActiveTags([decodeURIComponent(params.get("tag"))]);
     if (params.get("new") || params.get("error") || params.get("tag")) {
       window.history.replaceState({}, "", "/");

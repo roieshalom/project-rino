@@ -177,6 +177,12 @@ Reply with only the Hebrew category name, nothing else.`);
     return Response.json({ error: "fetch-failed", detail: String(e) }, { status: 500 });
   }
 
+  // quality check — if nothing was extracted, don't save
+  const hasContent = ingredients.length > 0 || steps.length > 0;
+  if (!hasContent) {
+    return Response.redirect(new URL("/?error=parse-failed", request.url));
+  }
+
   const { data: saved, error } = await supabase.from("recipes").insert([{
     title,
     description,
@@ -194,5 +200,6 @@ Reply with only the Hebrew category name, nothing else.`);
     return Response.json({ error: "save-failed", detail: error.message }, { status: 500 });
   }
 
-  return Response.redirect(new URL("/recipe/" + saved.id + "?new=1", request.url));
+  const suffix = parse_status === "fallback" ? "?new=1&warn=1" : "?new=1";
+  return Response.redirect(new URL("/recipe/" + saved.id + suffix, request.url));
 }
