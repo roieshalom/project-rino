@@ -131,6 +131,7 @@ const css = `
   .detail-img-wrap { position: relative; }
   .detail-img-top-right { position: absolute; top: 0.6rem; right: 0.6rem; z-index: 10; }
   .detail-img { width: 100%; height: 280px; object-fit: cover; display: block; }
+  @media (max-width: 600px) { .detail-img { height: 95px; } .detail-img-placeholder { height: 70px; font-size: 2rem; } }
   .detail-img-hidden { opacity: 0.4; }
   .detail-img-placeholder { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: var(--cream-dark); }
   .detail-body { padding: 1.75rem 1.5rem 4rem; }
