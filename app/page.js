@@ -309,7 +309,7 @@ const css = `
   .tag-inactive:hover { border-color: var(--terra); color: var(--terra); }
   .tag-active { background: var(--terra); color: white; border-color: var(--terra); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.1rem; }
-  .card-wrap { position: relative; height: 340px; transition: transform 0.22s, box-shadow 0.22s; border-radius: 14px; }
+  .card-wrap { position: relative; min-height: 340px; transition: transform 0.22s, box-shadow 0.22s; border-radius: 14px; }
   .card-wrap:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,18,8,0.12); }
   .card-wrap-hidden .card { opacity: 0.45; }
   .card-heart-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(244,236,216,0.92); border: 1px solid #b6aa8a; border-radius: 8px; width: 32px; height: 32px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: background 0.2s, transform 0.15s; }
@@ -324,7 +324,7 @@ const css = `
   .card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; border: 1px solid rgba(30,18,8,0.07); box-shadow: 0 1px 3px rgba(30,18,8,0.06); display: flex; flex-direction: column; height: 100%; transition: opacity 0.22s; }
   .card-img { width: 100%; height: 170px; object-fit: cover; display: block; flex-shrink: 0; }
   .card-img-placeholder { width: 100%; height: 170px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; background: var(--cream-dark); flex-shrink: 0; }
-  .card-body { padding: 1rem 1.1rem 1.2rem; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .card-body { padding: 1rem 1.1rem 1.5rem; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   .card-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.35rem; }
   .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.75rem; flex-shrink: 0; }
   .card-meta { display: flex; gap: 0.5rem; font-size: 0.72rem; color: var(--muted); flex-wrap: nowrap; align-items: center; margin-top: auto; overflow: hidden; }
