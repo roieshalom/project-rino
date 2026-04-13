@@ -260,8 +260,10 @@ export default function StatsButton() {
       {open && (
         <div className="stats-overlay" onClick={() => setOpen(false)}>
           <div className="stats-modal" onClick={e => e.stopPropagation()}>
-            <button className="stats-close" onClick={() => setOpen(false)}>✕</button>
-            <p className="stats-title">סטטיסטיקות</p>
+            <div className="stats-modal-header">
+              <button className="stats-close" onClick={() => setOpen(false)}>✕</button>
+              <p className="stats-title">סטטיסטיקות</p>
+            </div>
             <div className="stats-cards">
               <div className="stats-card stats-card-wide">
                 <p className="card-title">העלאות לפי שבוע — 12 שבועות אחרונים</p>
@@ -304,9 +306,13 @@ export default function StatsButton() {
         .stats-btn:hover { opacity: 1; }
         .stats-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
         .stats-modal { background: #FAF6EE; border-radius: 18px; padding: 2rem 1.5rem; width: min(96vw, 1000px); max-width: 100vw; position: relative; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; }
-        .stats-close { position: absolute; top: 0.75rem; left: 0.75rem; background: none; border: none; cursor: pointer; font-size: 1rem; color: #8C7B68; opacity: 0.6; }
+        .stats-modal-header { display: flex; align-items: center; justify-content: center; position: relative; width: 100%; flex-shrink: 0; }
+        .stats-close { position: absolute; left: 0; background: none; border: none; cursor: pointer; font-size: 1rem; color: #8C7B68; opacity: 0.6; padding: 0.25rem; }
         .stats-close:hover { opacity: 1; }
         .stats-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.25rem; font-weight: 700; color: #1E1208; }
+        @media (max-width: 600px) {
+          .stats-modal-header { position: sticky; top: 0; background: #FAF6EE; padding: 0.75rem 0; z-index: 10; border-bottom: 1px solid #EDE5D4; margin-bottom: 0.25rem; }
+        }
         .stats-loading { color: #8C7B68; font-size: 0.9rem; }
         .card-loader { display: flex; align-items: center; justify-content: center; padding: 2rem 0; flex: 1; }
         .stats-card .uib-container { --uib-size: 44px; --uib-color: #B85530; --uib-speed: 1.4s; position: relative; display: flex; align-items: center; justify-content: center; width: calc(var(--uib-size) * 0.51); height: calc(var(--uib-size) * 0.51); }
