@@ -37,8 +37,8 @@ function WeeklyChart({ data }) {
   const width = total * (W + GAP) - GAP;
 
   return (
-    <div style={{ overflowX: "auto", width: "100%" }}>
-      <svg width={width} height={TOP + H + LABEL_H} viewBox={`0 0 ${width} ${TOP + H + LABEL_H}`} style={{ display: "block", margin: "0 auto" }}>
+    <div style={{ overflowX: "auto", width: "100%", WebkitOverflowScrolling: "touch" }}>
+      <svg width={width} height={TOP + H + LABEL_H} viewBox={`0 0 ${width} ${TOP + H + LABEL_H}`} style={{ display: "block", margin: "0 auto", minWidth: width }}>
         {data.map((d, i) => {
           const barH = Math.max(2, (d.count / max) * H);
           const x = i * (W + GAP);
@@ -303,7 +303,7 @@ export default function StatsButton() {
         .stats-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 0.3rem 0.4rem; opacity: 0.45; transition: opacity 0.2s; line-height: 1; }
         .stats-btn:hover { opacity: 1; }
         .stats-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-        .stats-modal { background: #FAF6EE; border-radius: 18px; padding: 2rem 1.5rem; width: min(96vw, 1000px); position: relative; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; max-height: 90vh; overflow-y: auto; }
+        .stats-modal { background: #FAF6EE; border-radius: 18px; padding: 2rem 1.5rem; width: min(96vw, 1000px); max-width: 100vw; position: relative; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; }
         .stats-close { position: absolute; top: 0.75rem; left: 0.75rem; background: none; border: none; cursor: pointer; font-size: 1rem; color: #8C7B68; opacity: 0.6; }
         .stats-close:hover { opacity: 1; }
         .stats-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.25rem; font-weight: 700; color: #1E1208; }
@@ -316,11 +316,18 @@ export default function StatsButton() {
         .stats-card .uib-dot:last-child { animation: uib-swing2 var(--uib-speed) linear infinite; }
         @keyframes uib-swing { 0%{transform:rotate(0deg);animation-timing-function:ease-out} 25%{transform:rotate(-70deg);animation-timing-function:ease-in} 50%{transform:rotate(0deg);animation-timing-function:linear} }
         @keyframes uib-swing2 { 0%{transform:rotate(0deg);animation-timing-function:linear} 50%{transform:rotate(0deg);animation-timing-function:ease-out} 75%{transform:rotate(70deg);animation-timing-function:ease-in} }
-        .stats-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; }
-        @media (max-width: 500px) { .stats-cards { grid-template-columns: 1fr; } }
-        .stats-card { background: white; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .stats-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; min-width: 0; }
+        @media (max-width: 600px) {
+          .stats-overlay { padding: 0; align-items: flex-end; padding-top: 60px; }
+          .stats-modal { width: 100%; max-height: calc(100vh - 60px); border-radius: 20px 20px 0 0; padding: 1.5rem 1rem 2rem; }
+          .stats-cards { grid-template-columns: 1fr; }
+          .stats-card-wide { grid-column: 1; }
+          .stats-title { font-size: 1.5rem; }
+          .card-title { font-size: 0.95rem; }
+        }
+        .stats-card { background: white; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); min-width: 0; overflow: hidden; box-sizing: border-box; }
         .stats-card-wide { grid-column: 1 / -1; }
-        .card-title { font-family: 'Frank Ruhl Libre', serif; font-size: 0.95rem; font-weight: 700; color: #1E1208; text-align: center; }
+        .card-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.4rem; font-weight: 700; color: #1E1208; text-align: center; }
         .pie-inner { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
         .chart-legend { display: flex; flex-direction: column; gap: 0.3rem; width: 100%; }
         .legend-item { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; }
