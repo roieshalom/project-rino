@@ -324,8 +324,8 @@ export default function StatsButton() {
         @keyframes uib-swing2 { 0%{transform:rotate(0deg);animation-timing-function:linear} 50%{transform:rotate(0deg);animation-timing-function:ease-out} 75%{transform:rotate(70deg);animation-timing-function:ease-in} }
         .stats-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; min-width: 0; }
         @media (max-width: 600px) {
-          .stats-overlay { padding: 0; align-items: flex-end; padding-top: 60px; }
-          .stats-modal { width: 100%; max-height: calc(100vh - 60px); border-radius: 20px 20px 0 0; padding: 1.5rem 1rem 2rem; }
+          .stats-overlay { padding: 0; align-items: flex-end; padding-top: 120px; }
+          .stats-modal { width: 100%; max-height: calc(100vh - 120px); border-radius: 20px 20px 0 0; padding: 1.5rem 1rem 2rem; }
           .stats-cards { grid-template-columns: 1fr; }
           .stats-card-wide { grid-column: 1; }
           .stats-title { font-size: 1.5rem; }
