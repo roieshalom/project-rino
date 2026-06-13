@@ -152,7 +152,14 @@ Return only valid JSON, no other text.`);
           if (parsed.time) time = parsed.time;
           if (parsed.servings) servings = String(parsed.servings);
           parse_status = "ai";
-        } catch {}
+          if (ingredients.length === 0 && steps.length === 0) {
+            console.error("AI extraction returned empty arrays", { url: sharedUrl, parsed });
+          }
+        } catch (e) {
+          console.error("AI extraction returned unparseable JSON", { url: sharedUrl, error: String(e), aiText: aiText.slice(0, 1000) });
+        }
+      } else {
+        console.error("AI extraction returned no text", { url: sharedUrl });
       }
     }
 
@@ -185,6 +192,7 @@ Reply with only the Hebrew category name, nothing else.`);
   // quality check — if nothing was extracted, don't save
   const hasContent = ingredients.length > 0 || steps.length > 0;
   if (!hasContent) {
+    console.error("parse-failed", { url: sharedUrl, parse_status, title, hasTitle: title !== "מתכון חדש" });
     if (jsonMode) {
       return Response.json({ error: "parse-failed" }, { status: 422 });
     }
