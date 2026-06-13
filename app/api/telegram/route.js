@@ -1,7 +1,9 @@
+import { shareRecipe } from "../../../lib/recipe-share";
+
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const SITE_URL = "https://project-rino.vercel.app";
 
 async function urlAlreadyExists(url) {
   const { createClient } = await import("@supabase/supabase-js");
@@ -67,18 +69,17 @@ export async function POST(request) {
       return new Response("ok");
     }
 
-    const shareRes = await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}&added_by=${encodeURIComponent(addedBy)}&format=json`);
+    const result = await shareRecipe({ url, addedBy });
 
-    if (shareRes.ok) {
+    if (result.ok) {
       const reacted = await reactToMessage(chatId, messageId);
       if (!reacted) {
         await sendMessage(chatId, "✅ נשמר אבא!");
       }
-    } else if (shareRes.status === 422) {
+    } else if (result.error === "parse-failed") {
       await sendMessage(chatId, "❌ לא הצלחתי לקרוא את המתכון מהקישור הזה");
     } else {
-      const detail = await shareRes.text().catch(() => "");
-      console.error("share failed", shareRes.status, detail.slice(0, 500));
+      console.error("share failed", result);
       await sendMessage(chatId, "❌ שגיאה בשמירה");
     }
   } catch (e) {
