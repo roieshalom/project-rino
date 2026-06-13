@@ -67,12 +67,22 @@ export async function POST(request) {
       return new Response("ok");
     }
 
-    await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}&added_by=${encodeURIComponent(addedBy)}`);
-    const reacted = await reactToMessage(chatId, messageId);
-    if (!reacted) {
-      await sendMessage(chatId, "✅ נשמר אבא!");
+    const shareRes = await fetch(`${SITE_URL}/api/share?url=${encodeURIComponent(url)}&added_by=${encodeURIComponent(addedBy)}&format=json`);
+
+    if (shareRes.ok) {
+      const reacted = await reactToMessage(chatId, messageId);
+      if (!reacted) {
+        await sendMessage(chatId, "✅ נשמר אבא!");
+      }
+    } else if (shareRes.status === 422) {
+      await sendMessage(chatId, "❌ לא הצלחתי לקרוא את המתכון מהקישור הזה");
+    } else {
+      const detail = await shareRes.text().catch(() => "");
+      console.error("share failed", shareRes.status, detail.slice(0, 500));
+      await sendMessage(chatId, "❌ שגיאה בשמירה");
     }
-  } catch {
+  } catch (e) {
+    console.error("telegram handler error", e);
     await sendMessage(chatId, "❌ שגיאה");
   }
 

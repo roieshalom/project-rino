@@ -28,7 +28,11 @@ async function callClaude(prompt) {
       messages: [{ role: "user", content: prompt }],
     }),
   });
-  if (!res.ok) return null;
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    console.error("Anthropic API call failed", res.status, body.slice(0, 500));
+    return null;
+  }
   const data = await res.json();
   return data.content?.[0]?.text ?? null;
 }
@@ -43,6 +47,7 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const sharedUrl = searchParams.get("url");
   const addedBy = searchParams.get("added_by") ?? null;
+  const jsonMode = searchParams.get("format") === "json";
 
   if (!sharedUrl) {
     return Response.json({ error: "no-url" }, { status: 400 });
@@ -180,6 +185,9 @@ Reply with only the Hebrew category name, nothing else.`);
   // quality check — if nothing was extracted, don't save
   const hasContent = ingredients.length > 0 || steps.length > 0;
   if (!hasContent) {
+    if (jsonMode) {
+      return Response.json({ error: "parse-failed" }, { status: 422 });
+    }
     return Response.redirect(new URL("/?error=parse-failed", request.url));
   }
 
@@ -198,6 +206,10 @@ Reply with only the Hebrew category name, nothing else.`);
 
   if (error) {
     return Response.json({ error: "save-failed", detail: error.message }, { status: 500 });
+  }
+
+  if (jsonMode) {
+    return Response.json({ id: saved.id, parse_status });
   }
 
   const suffix = parse_status === "fallback" ? "?new=1&warn=1" : "?new=1";
